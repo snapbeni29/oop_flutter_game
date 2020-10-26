@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_mario/Projectile.dart';
 
 class Player extends ChangeNotifier {
+
   String _direction = "right";
   bool _midRun = false;
   bool _midJump = false;
@@ -25,7 +26,7 @@ class Player extends ChangeNotifier {
 
   // Player movement ----------------------------------------------------------
 
-  void jump(double velocity) {
+  void jump(double velocity, ) {
     // No double jump allowed --currently--
     if (_midJump) return;
 
@@ -54,52 +55,20 @@ class Player extends ChangeNotifier {
     });
   }
 
-  void stopRunRight() {
-    if (_direction == 'right') _midRun = false;
-  }
-
   void stopRunLeft() {
-    if (_direction == 'left') _midRun = false;
-  }
-
-  void moveRight() {
-    // If the player is currently holding left, we can't go right
-    if (_direction == 'left' && _midRun) return;
-
-    _direction = "right";
-    _midRun = true;
-
-    // Each 50ms, the position increases by a certain amount
-    Timer.periodic(Duration(milliseconds: 50), (timer) {
-      if (_midRun) {
-        _playerX += 0.015;
-        notifyListeners();
-      } else {
-        _runPos = 0;
-        timer.cancel();
-        notifyListeners();
-      }
-    });
+    _midRun = false;
   }
 
   void moveLeft() {
-    // If the player is currently holding right, we can't go left
-    if (_direction == 'right' && _midRun) return;
-
-    _direction = "left";
     _midRun = true;
+  }
 
-    // Each 50ms, the position increases by a certain amount
-    Timer.periodic(Duration(milliseconds: 50), (timer) {
-      if (_midRun) {
-        _playerX -= 0.015;
-        notifyListeners();
-      } else {
-        _runPos = 0;
-        timer.cancel();
-        notifyListeners();
-      }
-    });
+  void stopRunRight() {
+    _midRun = false;
+  }
+
+  void moveRight() {
+    _midRun = true;
   }
 
   Widget displayPlayer() {
@@ -204,9 +173,16 @@ class Player extends ChangeNotifier {
     );
   }
 
-  // Get functions ------------------------------------------------------------
+
+  // Get & Set functions ------------------------------------------------------
 
   double get posX => _playerX;
 
   double get posY => _playerY;
+
+  // ignore: unnecessary_getters_setters
+  String get direction => _direction;
+
+  // ignore: unnecessary_getters_setters
+  set direction(String d) => _direction = d;
 }

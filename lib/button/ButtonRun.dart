@@ -28,7 +28,7 @@ class _ButtonRunState extends State<ButtonRun> {
         setState(() {
           _holdingButton = true;
         });
-        widget.start();
+        widget.start(context);
       },
       // Release the button
       onTapUp: (details){
