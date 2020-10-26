@@ -3,8 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_mario/Projectile.dart';
 
-class Player extends ChangeNotifier{
-
+class Player extends ChangeNotifier {
   String _direction = "right";
   bool _midRun = false;
   bool _midJump = false;
@@ -20,17 +19,17 @@ class Player extends ChangeNotifier{
   double _initialHeight;
 
   List<Projectile> _projectileList = List();
-  int _aliveProj = 0;
-  int _maxProj = 3;
+  int _aliveProjectile = 0;
+  int _maxProjectile = 3;
   bool _firstShoot = false;
 
-  void jump(double velocity){
-    // No double jump allowed --currently--
-    if(_midJump)
-      return;
+  // Player movement ----------------------------------------------------------
 
-    if(velocity <= 0.0)
-      velocity = 4.0;
+  void jump(double velocity) {
+    // No double jump allowed --currently--
+    if (_midJump) return;
+
+    if (velocity <= 0.0) velocity = 4.0;
 
     _time = 0;
     _initialHeight = _playerY;
@@ -42,13 +41,12 @@ class Player extends ChangeNotifier{
       _height = -4.9 * _time * _time + velocity * _time;
 
       // Collision detection
-      if(_initialHeight - _height > 1.05){
+      if (_initialHeight - _height > 1.05) {
         _midJump = false;
         _playerY = 1.05;
         timer.cancel();
         notifyListeners();
-      }
-      else{
+      } else {
         // Update
         _playerY = _initialHeight - _height;
         notifyListeners();
@@ -56,31 +54,27 @@ class Player extends ChangeNotifier{
     });
   }
 
-  void stopRunRight(){
-    if(_direction == 'right')
-      _midRun = false;
+  void stopRunRight() {
+    if (_direction == 'right') _midRun = false;
   }
 
-  void stopRunLeft(){
-    if(_direction == 'left')
-      _midRun = false;
+  void stopRunLeft() {
+    if (_direction == 'left') _midRun = false;
   }
 
-  void moveRight(){
+  void moveRight() {
     // If the player is currently holding left, we can't go right
-    if(_direction == 'left' && _midRun)
-      return;
+    if (_direction == 'left' && _midRun) return;
 
     _direction = "right";
     _midRun = true;
 
     // Each 50ms, the position increases by a certain amount
     Timer.periodic(Duration(milliseconds: 50), (timer) {
-      if(_midRun){
+      if (_midRun) {
         _playerX += 0.015;
         notifyListeners();
-      }
-      else{
+      } else {
         _runPos = 0;
         timer.cancel();
         notifyListeners();
@@ -88,21 +82,19 @@ class Player extends ChangeNotifier{
     });
   }
 
-  void moveLeft(){
+  void moveLeft() {
     // If the player is currently holding right, we can't go left
-    if(_direction == 'right' && _midRun)
-      return;
+    if (_direction == 'right' && _midRun) return;
 
     _direction = "left";
     _midRun = true;
 
     // Each 50ms, the position increases by a certain amount
     Timer.periodic(Duration(milliseconds: 50), (timer) {
-      if(_midRun){
+      if (_midRun) {
         _playerX -= 0.015;
         notifyListeners();
-      }
-      else{
+      } else {
         _runPos = 0;
         timer.cancel();
         notifyListeners();
@@ -112,20 +104,18 @@ class Player extends ChangeNotifier{
 
   Widget displayPlayer() {
     Image img; // which sprite to display
-    if(_midJump){
-      img = Image.asset('images/Jump (' + _jumpPos.toString() +').png');
-    }
-    else if(_midRun){
+    if (_midJump) {
+      img = Image.asset('images/Jump (' + _jumpPos.toString() + ').png');
+    } else if (_midRun) {
       // Run animation : a different sprite in the pattern
       _runPos = (_runPos + 1) % 8;
-      img = Image.asset('images/Run ('+ (_runPos + 1).toString() +').png');
-    }
-    else{
+      img = Image.asset('images/Run (' + (_runPos + 1).toString() + ').png');
+    } else {
       img = Image.asset('images/Idle (1).png');
     }
 
     // The sprites are looking right initially
-    if(_direction == 'right'){
+    if (_direction == 'right') {
       return Container(
         width: 80.0,
         height: 80.0,
@@ -133,7 +123,7 @@ class Player extends ChangeNotifier{
       );
     }
     // When going left, we have to rotate the sprite by pi
-    else{
+    else {
       return Transform(
         alignment: Alignment.center,
         transform: Matrix4.rotationY(pi),
@@ -146,38 +136,36 @@ class Player extends ChangeNotifier{
     }
   }
 
-  //  Projectile interactions
+  //  Projectile interactions -------------------------------------------------
 
   void shoot() {
-    if(_aliveProj < _maxProj) {
+    // Shoot if there is not already _maxProjectile
+    if (_aliveProjectile < _maxProjectile) {
       if (!_firstShoot) {
         _firstShoot = true;
-        _projectileList.add(Projectile(
-            projectileX: (_playerX + 0.015),
-            projectileY: _playerY - 0.15,
-            direction: this._direction));
-        startProj();
-      } else {
-        _projectileList.add(Projectile(
-            projectileX: (_playerX + 0.015),
-            projectileY: _playerY - 0.15,
-            direction: this._direction));
+        startProjectile(); // start timer
       }
-      _aliveProj++;
+      _projectileList.add(Projectile(
+          projectileX:
+              _direction == 'right' ? _playerX + 0.015 : _playerX - 0.015,
+          projectileY: _playerY - 0.15,
+          direction: _direction));
+      _aliveProjectile++;
     }
   }
 
-  void startProj() {
+  void startProjectile() {
     Timer.periodic(Duration(milliseconds: 50), (timer) {
-      if(_projectileList.isEmpty){
+      // Stop the timer to save power
+      if (_projectileList.isEmpty) {
         _firstShoot = false;
         timer.cancel();
       }
-      for (Projectile proj in _projectileList) {
-        if (proj.getDirection == "right") {
-          proj.moveRight();
+      for (Projectile projectile in _projectileList) {
+        if (projectile.getDirection == "right") {
+          projectile.moveRight();
         } else {
-          proj.moveLeft();
+          projectile.moveLeft();
         }
       }
       notifyListeners();
@@ -186,44 +174,39 @@ class Player extends ChangeNotifier{
 
   Widget displayProjectile() {
     if (_projectileList.isEmpty) return Container();
+
     List<Widget> widgetProjectileList = List();
     for (int i = 0; i < _projectileList.length; i++) {
-      if(_projectileList.isEmpty){
+      if (_projectileList.isEmpty) {
         break;
       }
-      if(_projectileList[i].direction == "right"){
-        if(_projectileList[i].posX > 1.1){
-          _aliveProj--;
-          _projectileList.remove(_projectileList[i]);
-        }
-        else{
-          widgetProjectileList.add(AnimatedContainer(
-            alignment: Alignment(_projectileList[i].posX, _projectileList[i].posY),
-            duration: Duration(milliseconds: 0),
-            child: _projectileList[i].displayProjectile(),
-          ));
-        }
-      }
-      else{
-        if(_projectileList[i].posX < -1.1){
-          _aliveProj--;
-          _projectileList.remove(_projectileList[i]);
-        }
-        else{
-          widgetProjectileList.add(AnimatedContainer(
-            alignment: Alignment(_projectileList[i].posX, _projectileList[i].posY),
-            duration: Duration(milliseconds: 0),
-            child: _projectileList[i].displayProjectile(),
-          ));
-        }
+
+      bool outOfScreen = (_projectileList[i].direction == "right" &&
+              _projectileList[i].posX > 1.1) ||
+          (_projectileList[i].direction == "left" &&
+              _projectileList[i].posX < -1.1);
+
+      if (outOfScreen) {
+        _aliveProjectile--;
+        _projectileList.remove(_projectileList[i]);
+      } else {
+        widgetProjectileList.add(AnimatedContainer(
+          alignment:
+              Alignment(_projectileList[i].posX, _projectileList[i].posY),
+          duration: Duration(milliseconds: 0),
+          child: _projectileList[i].displayProjectile(),
+        ));
       }
     }
+
     return Stack(
       children: widgetProjectileList,
     );
   }
 
-  // Get functions
+  // Get functions ------------------------------------------------------------
+
   double get posX => _playerX;
+
   double get posY => _playerY;
 }
