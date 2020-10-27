@@ -23,12 +23,12 @@ class Platform {
     );
   }
 
-  void moveLeft(){
-    posX += 0.015;
+  void moveLeft(double speed){
+    posX += speed;
   }
 
-  void moveRight(){
-    posX -= 0.015;
+  void moveRight(double speed){
+    posX -= speed;
   }
 
 }

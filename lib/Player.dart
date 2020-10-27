@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_mario/Platform/Platform.dart';
 import 'package:flutter_app_mario/Projectile.dart';
 
 class Player extends ChangeNotifier {
-
   String _direction = "right";
   bool _midRun = false;
   bool _midJump = false;
+  bool _midFall = false;
 
   double _playerX = 0;
   double _playerY = 1.05;
 
   int _runPos = 0;
-  int _jumpPos = 5;
 
   double _time = 0;
   double _height = 0;
@@ -26,7 +26,8 @@ class Player extends ChangeNotifier {
 
   // Player movement ----------------------------------------------------------
 
-  void jump(double velocity, ) {
+  void jump(double velocity, List<Platform> platformList, double pixelWidth,
+      double pixelHeight) {
     // No double jump allowed --currently--
     if (_midJump) return;
 
@@ -42,16 +43,71 @@ class Player extends ChangeNotifier {
       _height = -4.9 * _time * _time + velocity * _time;
 
       // Collision detection
-      if (_initialHeight - _height > 1.05) {
-        _midJump = false;
-        _playerY = 1.05;
+      for (Platform pt in platformList) {
+        if (_direction == "right"
+            ? pt.posX - ((pt.width / 2) * pixelWidth) <
+                    pixelWidth * 80 * 0.73 &&
+                pt.posX + ((pt.width / 2) * pixelWidth) >
+                    -pixelWidth * 80 * 0.73
+            : pt.posX - ((pt.width / 2) * pixelWidth) <
+                    pixelWidth * 80 * 0.73 &&
+                pt.posX + ((pt.width / 2) * pixelWidth) >
+                    -pixelWidth * 80 * 0.73) {
+          if (_initialHeight - _height >
+              pt.posY -
+                  pt.height * pixelHeight * 7 / 5 +
+                  0.09 * 7 / 5 * 80 * pixelHeight) {
+            _midJump = false;
+            //
+            _playerY = pt.posY -
+                pt.height * pixelHeight * 7 / 5 +
+                0.09 * 7 / 5 * 80 * pixelHeight;
+            timer.cancel();
+            break;
+          } else {
+            // Update
+            _playerY = _initialHeight - _height;
+            notifyListeners();
+          }
+        } else {
+          if (_initialHeight - _height > 1 + 0.1 * 80 * pixelHeight) {
+            _midJump = false;
+            _playerY = 1 + 0.1 * 80 * pixelHeight;
+            timer.cancel();
+            break;
+          } else {
+            // Update
+            _playerY = _initialHeight - _height;
+            notifyListeners();
+          }
+        }
+      }
+      notifyListeners();
+    });
+  }
+
+  void fall(double pixelHeight) {
+    _time = 0;
+    _initialHeight = _playerY;
+    _midFall = true;
+
+    Timer.periodic(Duration(milliseconds: 60), (timer) {
+      _time += 0.05;
+      // Gravity equation
+      _height = -4.9 * _time * _time;
+
+      // Collision detection
+
+      if (_initialHeight - _height > 1 + 0.1 * 80 * pixelHeight) {
+        _midFall = false;
+        _playerY = 1 + 0.1 * 80 * pixelHeight;
         timer.cancel();
-        notifyListeners();
       } else {
         // Update
         _playerY = _initialHeight - _height;
         notifyListeners();
       }
+      notifyListeners();
     });
   }
 
@@ -74,7 +130,9 @@ class Player extends ChangeNotifier {
   Widget displayPlayer() {
     Image img; // which sprite to display
     if (_midJump) {
-      img = Image.asset('images/Jump (' + _jumpPos.toString() + ').png');
+      img = Image.asset('images/Jump (5).png');
+    } else if (_midFall) {
+      img = Image.asset('images/Jump (9).png');
     } else if (_midRun) {
       // Run animation : a different sprite in the pattern
       _runPos = (_runPos + 1) % 8;
@@ -117,7 +175,7 @@ class Player extends ChangeNotifier {
       _projectileList.add(Projectile(
           projectileX:
               _direction == 'right' ? _playerX + 0.015 : _playerX - 0.015,
-          projectileY: _playerY - 0.15,
+          projectileY: _playerY - 0.13,
           direction: _direction));
       _aliveProjectile++;
     }
@@ -172,7 +230,6 @@ class Player extends ChangeNotifier {
       children: widgetProjectileList,
     );
   }
-
 
   // Get & Set functions ------------------------------------------------------
 

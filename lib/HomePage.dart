@@ -16,19 +16,17 @@ class HomePage extends StatelessWidget {
                 return Scaffold(
                   body: Column(
                     children: <Widget>[
-                      Expanded(
+                      Flexible(
                         flex: 5,
+                        fit: FlexFit.tight,
                         child: Container(
                           color: Colors.blue,
-                          child: Stack(
-                            children: [
-                              level.displayLevel(),
-                            ],
-                          ),
+                          child: level.displayLevel(),
                         ),
                       ),
-                      Expanded(
+                      Flexible(
                         flex: 2,
+                        fit: FlexFit.tight,
                         child: Container(
                           color: Colors.brown,
                           child: Row(
@@ -43,7 +41,7 @@ class HomePage extends StatelessWidget {
                               ButtonTemplate(
                                 type: ButtonType.jump,
                                 icon: Icon(Icons.arrow_upward),
-                                start: player.jump,
+                                start: level.jump,
                               ),
                               ButtonTemplate(
                                 type: ButtonType.shoot,

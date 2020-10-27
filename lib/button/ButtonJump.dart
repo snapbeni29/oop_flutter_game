@@ -33,7 +33,7 @@ class _ButtonJumpState extends State<ButtonJump> {
        */
       onTapUp: (details){
         if(sw.isRunning) {
-          widget.start(sw.elapsedMilliseconds / 200 + _minVelocity);
+          widget.start(sw.elapsedMilliseconds / 200 + _minVelocity, context);
           setState(() {
             sw.stop();
             sw.reset();
@@ -45,7 +45,7 @@ class _ButtonJumpState extends State<ButtonJump> {
        */
       onLongPressStart: (details){
         if(sw.isRunning) {
-          widget.start(sw.elapsedMilliseconds / 200 + _minVelocity);
+          widget.start(sw.elapsedMilliseconds / 200 + _minVelocity, context);
           setState(() {
             sw.stop();
             sw.reset();
