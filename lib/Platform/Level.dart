@@ -7,6 +7,7 @@ class Level extends ChangeNotifier {
   double _posX = 0.7;
   double _posY = 0.5;
 
+
   double _speed = 0.025;
 
   Player _player;
@@ -26,7 +27,7 @@ class Level extends ChangeNotifier {
     ));
 
     /*_platformList.add(Platform(
-      width: 100,
+      width: 200,
       height: 10,
       posX: 0.4,
       posY: -0.5,
@@ -63,6 +64,8 @@ class Level extends ChangeNotifier {
     double pixelWidth = 2 / MediaQuery.of(context).size.width;
     double pixelHeight = 2 / (MediaQuery.of(context).size.height * 5 / 7);
 
+    bool collision = false;
+
     _player.direction = "left";
     _midRun = true;
     _player.moveLeft();
@@ -74,15 +77,20 @@ class Level extends ChangeNotifier {
             stopMoveLeft();
             timer.cancel();
             notifyListeners();
+            collision = true;
             break;
           }
-          if (isFalling(pixelWidth, pt, _player.direction)) {
-            _player.fall(pixelHeight);
-          }
-          pt.moveLeft(_speed);
         }
-        _posX += _speed;
-        notifyListeners();
+        if (!collision) {
+          for (Platform pt in _platformList) {
+            pt.moveLeft(_speed);
+            if (isFalling(pixelWidth, pt, _player.direction)) {
+              _player.fall(pixelHeight);
+            }
+          }
+          _posX += _speed;
+          notifyListeners();
+        }
       } else {
         timer.cancel();
         notifyListeners();
@@ -103,26 +111,35 @@ class Level extends ChangeNotifier {
 
     if (_player.direction == "left" && _midRun) return;
 
+    bool collision = false;
+
     _player.direction = "right";
     _midRun = true;
     _player.moveRight();
+
 
     Timer.periodic(Duration(milliseconds: 50), (timer) {
       if (_midRun) {
         for (Platform pt in _platformList) {
           if (collide(pixelWidth, pixelHeight, pt, _player.direction)) {
+            debugPrint(pt.height.toString());
             stopMoveRight();
             timer.cancel();
             notifyListeners();
+            collision = true;
             break;
           }
-          if (isFalling(pixelWidth, pt, _player.direction)) {
-            _player.fall(pixelHeight);
-          }
-          pt.moveRight(_speed);
         }
-        _posX -= _speed;
-        notifyListeners();
+        if (!collision) {
+          for (Platform pt in _platformList) {
+            pt.moveRight(_speed);
+            if (isFalling(pixelWidth, pt, _player.direction)) {
+              _player.fall(pixelHeight);
+            }
+          }
+          _posX -= _speed;
+          notifyListeners();
+        }
       } else {
         timer.cancel();
         notifyListeners();
@@ -152,19 +169,29 @@ class Level extends ChangeNotifier {
     if (direction == "right") {
       if (pt.posX - ((pt.width / 2) * pixelWidth) < pixelWidth * 80 * 0.83 &&
           pt.posX + ((pt.width / 2) * pixelWidth) > pixelWidth * 80 * 0.83) {
-        if (_player.posY - 0.09 * 7 / 5 * 80 * pixelHeight >
-            pt.posY - ((pt.height) * pixelHeight)) {
-          return true;
+        // No collision top of block is under the player
+        if(pt.posY - pt.height * pixelHeight * 7 / 5 > _player.posY - 0.1 * 7 / 5 * 80 * pixelHeight){
+          return false;
         }
+        // No collision bottom of block is above the head of the character
+        if(pt.posY < _player.posY - 80 * pixelHeight * 0.91 * 7/5){
+          return false;
+        }
+        return true;
       }
       return false;
     } else {
       if (pt.posX + ((pt.width / 2) * pixelWidth) > -pixelWidth * 80 * 0.83 &&
           pt.posX - ((pt.width / 2) * pixelWidth) < -pixelWidth * 80 * 0.83) {
-        if (_player.posY - 0.09 * 7 / 5 * 80 * pixelHeight >
-            pt.posY - ((pt.height) * pixelHeight)) {
-          return true;
+        // No collision top of block is under the player
+        if(pt.posY - pt.height * pixelHeight * 7 / 5 > _player.posY - 0.1 * 7 / 5 * 80 * pixelHeight){
+          return false;
         }
+        // No collision bottom of block is above the head of the character
+        if(pt.posY < _player.posY - 80 * pixelHeight * 0.91 * 7/5){
+          return false;
+        }
+        return true;
       }
       return false;
     }
