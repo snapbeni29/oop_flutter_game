@@ -16,17 +16,15 @@ class HomePage extends StatelessWidget {
                 return Scaffold(
                   body: Column(
                     children: <Widget>[
-                      Flexible(
+                      Expanded(
                         flex: 5,
-                        fit: FlexFit.tight,
                         child: Container(
                           color: Colors.blue,
                           child: level.displayLevel(),
                         ),
                       ),
-                      Flexible(
+                      Expanded(
                         flex: 2,
-                        fit: FlexFit.tight,
                         child: Container(
                           color: Colors.brown,
                           child: Row(

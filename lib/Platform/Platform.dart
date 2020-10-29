@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart' show Alignment, AnimatedContainer, BoxDecoration, Colors, Container, Widget;
+import 'package:flutter/material.dart';
 
 class Platform {
   double width;
@@ -10,7 +10,7 @@ class Platform {
   Platform({this.width, this.height, this.posX, this.posY});
 
   Widget displayPlatform() {
-    return AnimatedContainer(
+    return AnimatedAlign(
       alignment: Alignment(posX, posY),
       duration: Duration(milliseconds: 0),
       child: Container(

@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_mario/Platform/Platform.dart';
 import 'package:flutter_app_mario/Projectile.dart';
+import 'package:flutter_app_mario/utils/Limits.dart';
 
 class Player extends ChangeNotifier {
   String _direction = "right";
@@ -11,7 +12,7 @@ class Player extends ChangeNotifier {
   bool _midFall = false;
 
   double _playerX = 0;
-  double _playerY = 1.05;
+  double _playerY = 1.06;
 
   int _runPos = 0;
 
@@ -37,31 +38,28 @@ class Player extends ChangeNotifier {
     _initialHeight = _playerY;
     _midJump = true;
 
-    Timer.periodic(Duration(milliseconds: 60), (timer) {
+    Timer.periodic(Duration(milliseconds: 40), (timer) {
       _time += 0.05;
       // Gravity equation
       _height = -4.9 * _time * _time + velocity * _time;
 
       // Collision detection
       for (Platform pt in platformList) {
-        if (_direction == "right"
-            ? pt.posX - ((pt.width / 2) * pixelWidth) <
-                    pixelWidth * 80 * 0.73 &&
-                pt.posX + ((pt.width / 2) * pixelWidth) >
-                    -pixelWidth * 80 * 0.73
-            : pt.posX - ((pt.width / 2) * pixelWidth) <
-                    pixelWidth * 80 * 0.73 &&
-                pt.posX + ((pt.width / 2) * pixelWidth) >
-                    -pixelWidth * 80 * 0.73) {
-          if (_initialHeight - _height >
-              pt.posY -
-                  pt.height * pixelHeight * 7 / 5 +
-                  0.09 * 7 / 5 * 80 * pixelHeight) {
+        if (isOnPlatX(pt, pixelWidth)) {
+          if (getPlayerTopBoundarie(posY, pixelHeight) <
+                  getBottomBoundarie(pt.posY, pt.height, pixelHeight) &&
+              getPlayerTopBoundarie(posY, pixelHeight) >
+                  getTopBoundarie(pt.posY, pt.height, pixelHeight)) {
+            debugPrint("coucou fall");
             _midJump = false;
-            //
-            _playerY = pt.posY -
-                pt.height * pixelHeight * 7 / 5 +
-                0.09 * 7 / 5 * 80 * pixelHeight;
+            timer.cancel();
+            fall(pixelHeight, pixelWidth, platformList);
+            break;
+          } else if (getPlayerBottomBoundarie(posY, pixelHeight)>
+              getTopBoundarie(pt.posY, pt.height, pixelHeight) - 0.05) {
+            debugPrint("coucou atterissage");
+            _midJump = false;
+            _playerY = (getTopBoundarie(pt.posY, pt.height, pixelHeight) - 35 * pixelHeight) / (1 - 40 * pixelHeight);
             timer.cancel();
             break;
           } else {
@@ -71,8 +69,9 @@ class Player extends ChangeNotifier {
           }
         } else {
           if (_initialHeight - _height > 1 + 0.1 * 80 * pixelHeight) {
+            debugPrint("coucou");
             _midJump = false;
-            _playerY = 1 + 0.1 * 80 * pixelHeight;
+            _playerY = 1 + 0.09 * 80 * pixelHeight * 7 / 5;
             timer.cancel();
             break;
           } else {
@@ -86,7 +85,8 @@ class Player extends ChangeNotifier {
     });
   }
 
-  void fall(double pixelHeight) {
+  void fall(
+      double pixelHeight, double pixelWidth, List<Platform> platformList) {
     _time = 0;
     _initialHeight = _playerY;
     _midFall = true;
@@ -97,15 +97,40 @@ class Player extends ChangeNotifier {
       _height = -4.9 * _time * _time;
 
       // Collision detection
-
-      if (_initialHeight - _height > 1 + 0.1 * 80 * pixelHeight) {
-        _midFall = false;
-        _playerY = 1 + 0.1 * 80 * pixelHeight;
-        timer.cancel();
+      if (platformList.isEmpty) {
+        if (_initialHeight - _height > 1 + 0.1 * 80 * pixelHeight) {
+          _midFall = false;
+          _playerY = 1 + 0.1 * 80 * pixelHeight;
+          timer.cancel();
+        } else {
+          // Update
+          _playerY = _initialHeight - _height;
+          notifyListeners();
+        }
       } else {
-        // Update
-        _playerY = _initialHeight - _height;
-        notifyListeners();
+        for (Platform pt in platformList) {
+          if (_initialHeight - _height >
+                  pt.posY - pt.height * pixelHeight * 7 / 5 &&
+              isOnPlatX(pt, pixelWidth)) {
+            _playerY = pt.posY -
+                pt.height * pixelHeight * 7 / 5 +
+                0.09 * 7 / 5 * 80 * pixelHeight;
+            _midFall = false;
+            _playerY = pt.posY -
+                pt.height * pixelHeight * 7 / 5 +
+                0.09 * 7 / 5 * 80 * pixelHeight;
+            timer.cancel();
+            break;
+          } else if (_initialHeight - _height > 1 + 0.1 * 80 * pixelHeight) {
+            _midFall = false;
+            _playerY = 1 + 0.1 * 80 * pixelHeight;
+            timer.cancel();
+          } else {
+            // Update
+            _playerY = _initialHeight - _height;
+            notifyListeners();
+          }
+        }
       }
       notifyListeners();
     });
@@ -229,6 +254,14 @@ class Player extends ChangeNotifier {
     return Stack(
       children: widgetProjectileList,
     );
+  }
+
+  // Check that if a player is on the top of a platform according to X axis
+  bool isOnPlatX(Platform pt, pixelWidth) {
+    return (getLeftBoundarie(pt.posX, pt.width, pixelWidth) <
+            getPlayerRightBoundarie(pixelWidth) &&
+        getRightBoundarie(pt.posX, pt.width, pixelWidth) >
+            getPlayerLeftBoundarie(pixelWidth));
   }
 
   // Get & Set functions ------------------------------------------------------
