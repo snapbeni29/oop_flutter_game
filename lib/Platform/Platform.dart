@@ -1,21 +1,19 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'
+    show Alignment, AnimatedContainer, BoxDecoration, Colors, Container, Widget;
+import 'package:flutter_app_mario/Body.dart';
 
 class Platform {
-  double width;
-  double height;
+  Body body;
 
-  double posX;
-  double posY;
-
-  Platform({this.width, this.height, this.posX, this.posY});
+  Platform({this.body});
 
   Widget displayPlatform() {
-    return AnimatedAlign(
-      alignment: Alignment(posX, posY),
+    return AnimatedContainer(
+      alignment: Alignment(body.x, body.y),
       duration: Duration(milliseconds: 0),
       child: Container(
-        width: width,
-        height: height,
+        width: body.width,
+        height: body.height,
         decoration: BoxDecoration(
           color: Colors.brown,
         ),
@@ -23,12 +21,19 @@ class Platform {
     );
   }
 
-  void moveLeft(double speed){
-    posX += speed;
+  void moveLeft(double speed) {
+    body.x += speed;
   }
 
-  void moveRight(double speed){
-    posX -= speed;
+  void moveRight(double speed) {
+    body.x -= speed;
   }
 
+  double get posX => body.x;
+
+  double get posY => body.y;
+
+  double get width => body.width;
+
+  double get height => body.height;
 }
