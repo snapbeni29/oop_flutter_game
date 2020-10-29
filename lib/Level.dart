@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_app_mario/Body.dart';
 import 'package:flutter_app_mario/Platform/Layout.dart';
 import 'package:flutter_app_mario/Platform/Platform.dart';
 import 'package:flutter_app_mario/Player/Player.dart';
@@ -59,8 +60,8 @@ class Level extends ChangeNotifier {
         // Collision with a platform
         bool collision = false;
         for (Platform pt in _platformList) {
-          if (_player.body
-              .collideHorizontally(pt.body, _pixelWidth, _pixelHeight)) {
+          if (_player.body.collideHorizontally(pt.body, _player.direction,
+              _speed, _pixelWidth, _pixelHeight)) {
             stopMoveLeft();
             timer.cancel();
             notifyListeners();
@@ -104,8 +105,8 @@ class Level extends ChangeNotifier {
         // Collision with a platform
         bool collision = false;
         for (Platform pt in _platformList) {
-          if (_player.body
-              .collideHorizontally(pt.body, _pixelWidth, _pixelHeight)) {
+          if (_player.body.collideHorizontally(pt.body, _player.direction,
+              _speed, _pixelWidth, _pixelHeight)) {
             //debugPrint(pt.height.toString());
             stopMoveRight();
             timer.cancel();
@@ -147,20 +148,31 @@ class Level extends ChangeNotifier {
     _player.fall(_platformList);
   }
 
-  // TODO : modify
   bool isFalling(Platform pt, String direction) {
     if (direction == "right") {
-      if (pt.posX + ((pt.width / 2) * _pixelWidth) + _speed >
-              -_pixelWidth * 80 * 0.73 &&
-          pt.posX + ((pt.width / 2) * _pixelWidth) - _speed <
-              -_pixelWidth * 80 * 0.73) {
+      // If left part of player is no more on the platform => fall
+      if (getRightBoundary(pt.posX, pt.width, _pixelWidth) + _speed >
+              getLeftBoundary(_player.posX, _player.body.width, _pixelWidth) &&
+          getRightBoundary(pt.posX, pt.width, _pixelWidth) <
+              getLeftBoundary(_player.posX, _player.body.width, _pixelWidth) &&
+          // Here we check that the player is on the platform
+          getTopBoundary(pt.posY, pt.height, _pixelHeight) >
+              getBottomBoundary(
+                      _player.posY, _player.body.height, _pixelHeight) -
+                  0.05) {
         return true;
       }
     } else {
-      if (pt.posX - ((pt.width / 2) * _pixelWidth) - _speed <
-              _pixelWidth * 80 * 0.73 &&
-          pt.posX - ((pt.width / 2) * _pixelWidth) + _speed >
-              _pixelWidth * 80 * 0.73) {
+      // If right part of player is no more on the platform => fall
+      if (getLeftBoundary(pt.posX, pt.width, _pixelWidth) - _speed <
+              getRightBoundary(_player.posX, _player.body.width, _pixelWidth) &&
+          getLeftBoundary(pt.posX, pt.width, _pixelWidth) >
+              getRightBoundary(_player.posX, _player.body.width, _pixelWidth) &&
+          // Here we check that the player is on the platform
+          getTopBoundary(pt.posY, pt.height, _pixelHeight) >
+              getBottomBoundary(
+                      _player.posY, _player.body.height, _pixelHeight) -
+                  0.05) {
         return true;
       }
     }

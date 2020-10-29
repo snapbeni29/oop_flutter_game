@@ -30,15 +30,18 @@ class Player extends ChangeNotifier {
   double _pixelHeight;
 
   Player(BuildContext context) {
-    _body = new Body(
-      width: MediaQuery.of(context).size.width / 10.0,
-      height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 4.0,
-      x: 0.0,
-      y: 1.0,
-    );
-
     _pixelWidth = 2.0 / MediaQuery.of(context).size.width;
     _pixelHeight = 2.0 / (MediaQuery.of(context).size.height * 5.0 / 7.0);
+
+    double w = MediaQuery.of(context).size.width / 10.0;
+    double h = (MediaQuery.of(context).size.height * 5.0 / 7.0) / 4.0;
+
+    _body = new Body(
+      width: w,
+      height: h,
+      x: 0.0,
+      y: (1.0 - h * _pixelHeight / 2.0) / (1.0 - _pixelHeight * h / 2.0),
+    );
   }
 
   // Player movement ----------------------------------------------------------
@@ -65,36 +68,44 @@ class Player extends ChangeNotifier {
     _initialHeight = _body.y;
     _midJump = true;
 
-    Timer.periodic(Duration(milliseconds: 60), (timer) {
-      _time += 0.05;
+    bool collision = false;
+
+    Timer.periodic(Duration(milliseconds: 30), (timer) {
+      _time += 0.025;
       double prevHeight = _height;
 
       // Gravity equation
       _height = -4.9 * _time * _time + velocity * _time;
 
       _verticalDirection = prevHeight < _height ? "up" : "down";
-      debugPrint(_verticalDirection);
+      double speed =
+          prevHeight < _height ? _height - prevHeight : prevHeight - _height;
 
       // Collision detection with a platform
-      bool collision = false;
+      collision = false;
       for (Platform pt in platformList) {
         // Bump into a platform while jumping up
         if (_verticalDirection == "up" &&
-            _body.collideVertically(pt.body, _pixelWidth, _pixelHeight)) {
+            _body.collideVertically(pt.body, _verticalDirection, speed,
+                _pixelWidth, _pixelHeight)) {
           _midJump = false;
           collision = true;
+          _height = 0.0;
+          print(pt.posY);
           timer.cancel();
           fall(platformList);
           break;
         }
         // Land onto a platform
         else if (_verticalDirection == "down" &&
-            _body.collideVertically(pt.body, _pixelWidth, _pixelHeight)) {
+            _body.collideVertically(pt.body, _verticalDirection, speed,
+                _pixelWidth, _pixelHeight)) {
           _midJump = false;
-          body.y = (body.getTopBoundary(pt.posY, pt.height, _pixelHeight) -
-                  35 * _pixelHeight) /
-              (1 - 40 * _pixelHeight);
+          _body.y = (getTopBoundary(pt.posY, pt.height, _pixelHeight) -
+                  _body.height * _pixelHeight / 2.0) /
+              (1 - _pixelHeight * _body.height / 2.0);
           collision = true;
+          _height = 0.0;
           timer.cancel();
           break;
         }
@@ -104,7 +115,9 @@ class Player extends ChangeNotifier {
         // Land on the ground
         if (_initialHeight - _height > 1.0) {
           _midJump = false;
-          body.y = 1.0;
+          _body.y = (1.0 - _body.height * _pixelHeight / 2.0) /
+              (1 - _pixelHeight * _body.height / 2.0);
+          _height = 0.0;
           timer.cancel();
         } else
           body.y = _initialHeight - _height;
@@ -120,22 +133,31 @@ class Player extends ChangeNotifier {
     _midFall = true;
     _verticalDirection = "down";
 
-    Timer.periodic(Duration(milliseconds: 60), (timer) {
-      _time += 0.05;
+    bool collision = false;
+
+    Timer.periodic(Duration(milliseconds: 30), (timer) {
+      _time += 0.025;
+      double prevHeight = _height;
+
       // Gravity equation
       _height = -4.9 * _time * _time;
 
+      double speed =
+          prevHeight < _height ? _height - prevHeight : prevHeight - _height;
+
       // Collision detection
-      bool collision = false;
+      collision = false;
       for (Platform pt in platformList) {
         // Land onto a platform
         if (_verticalDirection == "down" &&
-            _body.collideVertically(pt.body, _pixelWidth, _pixelHeight)) {
+            _body.collideVertically(pt.body, _verticalDirection, speed,
+                _pixelWidth, _pixelHeight)) {
           _midFall = false;
-          body.y = (body.getTopBoundary(pt.posY, pt.height, _pixelHeight) -
-                  35 * _pixelHeight) /
-              (1 - 40 * _pixelHeight);
+          _body.y = (getTopBoundary(pt.posY, pt.height, _pixelHeight) -
+                  _body.height * _pixelHeight / 2.0) /
+              (1 - _pixelHeight * _body.height / 2.0);
           collision = true;
+          _height = 0.0;
           timer.cancel();
           break;
         }
@@ -145,10 +167,12 @@ class Player extends ChangeNotifier {
         // Land on the ground
         if (_initialHeight - _height > 1.0) {
           _midFall = false;
-          body.y = 1.0;
+          _body.y = (1.0 - _body.height * _pixelHeight / 2.0) /
+              (1 - _pixelHeight * _body.height / 2.0);
+          _height = 0.0;
           timer.cancel();
         } else
-          body.y = _initialHeight - _height;
+          _body.y = _initialHeight - _height;
       }
 
       notifyListeners();
@@ -174,7 +198,10 @@ class Player extends ChangeNotifier {
       return Container(
         width: _body.width,
         height: _body.height,
-        child: img,
+        child: FittedBox(
+          fit: BoxFit.fill,
+          child: img,
+        ),
       );
     }
     // When going left, we have to rotate the sprite by pi
@@ -185,7 +212,10 @@ class Player extends ChangeNotifier {
         child: Container(
           width: _body.width,
           height: _body.height,
-          child: img,
+          child: FittedBox(
+            fit: BoxFit.fill,
+            child: img,
+          ),
         ),
       );
     }
@@ -205,7 +235,7 @@ class Player extends ChangeNotifier {
         body: new Body(
           // TODO : these double values should be generic
           x: _direction == 'right' ? _body.x + 0.015 : _body.x - 0.015,
-          y: _body.y - 0.13,
+          y: _body.y - 0.25,
           width: _body.width / 4,
           height: _body.height / 4,
         ),

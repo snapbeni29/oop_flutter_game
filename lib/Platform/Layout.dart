@@ -15,16 +15,14 @@ class Layout{
       ),
     ));
 
-    /*
     platformList.add(Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
-        height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 4.0,
+        height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 8.0,
         x: 1.0,
         y: -1.0,
       ),
     ));
-    */
 
     platformList.add(Platform(
       body: new Body(
@@ -32,6 +30,15 @@ class Layout{
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 4.0,
         x: -1.0,
         y: -0.5,
+      ),
+    ));
+
+    platformList.add(Platform(
+      body: new Body(
+        width: MediaQuery.of(context).size.width / 8.0,
+        height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 8.0,
+        x: 0.0,
+        y: 0.25,
       ),
     ));
 
