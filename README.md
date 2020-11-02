@@ -16,6 +16,8 @@ See level.dart line 101, it is explained there.
 
 ## What to do next
 
-It would be easier if enemies were stuck on one platform/zone.
+- It would be easier if enemies were stuck on one platform/zone.
 
-Create the home page (start button, pause button...)
+- Create the home page (start button, pause button...)
+
+- Find a name
