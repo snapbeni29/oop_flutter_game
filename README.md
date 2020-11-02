@@ -1,16 +1,15 @@
-# flutter_app_mario
+# Mario-like game for OOP mobile project
 
-A new Flutter application.
+Around 1300 lines of code so far:
+	Player moves freely
+	Collision between player and environment
+	Collision between projectiles and environment
+	Enemies move, take and deal damage
 
-## Getting Started
+## Current bug to solve
 
-This project is a starting point for a Flutter application.
+See level.dart line 101, it is explained there.
 
-A few resources to get you started if this is your first Flutter project:
+## What to do next
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+It would be easier if enemies were stuck on one platform/zone.
