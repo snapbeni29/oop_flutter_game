@@ -4,11 +4,13 @@ import 'package:flutter_app_mario/level/Enemy.dart';
 import 'package:flutter_app_mario/level/Platform.dart';
 
 class Layout {
+  List<Platform> _platformList;
+
   List<Platform> createPlatforms(BuildContext context) {
-    List<Platform> platformList = new List();
+    _platformList = new List();
 
     // bottom right
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 4.0,
@@ -18,7 +20,7 @@ class Layout {
     ));
 
     // top right
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 8.0,
@@ -28,7 +30,7 @@ class Layout {
     ));
 
     // top left
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 4.0,
@@ -38,7 +40,7 @@ class Layout {
     ));
 
     // center
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 8.0,
@@ -48,7 +50,7 @@ class Layout {
     ));
 
 
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 8.0,
@@ -58,7 +60,7 @@ class Layout {
     ));
 
 
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 8.0,
@@ -68,7 +70,7 @@ class Layout {
     ));
 
 
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 8.0,
@@ -78,7 +80,7 @@ class Layout {
     ));
 
 
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 4 * 3,
@@ -88,7 +90,7 @@ class Layout {
     ));
 
 
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 8.0,
@@ -98,7 +100,7 @@ class Layout {
     ));
 
 
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 8.0,
@@ -108,7 +110,7 @@ class Layout {
     ));
 
 
-    platformList.add(new Platform(
+    _platformList.add(new Platform(
       body: new Body(
         width: MediaQuery.of(context).size.width / 4.0,
         height: (MediaQuery.of(context).size.height * 5.0 / 7.0) / 4 * 3,
@@ -117,10 +119,13 @@ class Layout {
       ),
     ));
 
-    return platformList;
+    return _platformList;
   }
 
-  List<Enemy> createEnemies(BuildContext context, List<Platform> platformList) {
+  List<Enemy> createEnemies(BuildContext context) {
+    if(_platformList == null)
+      return new List<Enemy>();
+
     List<Enemy> enemyList = new List();
 
     //double pixelWidth = 2.0 / MediaQuery.of(context).size.width;
@@ -131,12 +136,12 @@ class Layout {
 
     enemyList.add(new Enemy(
       maxHealth: 3,
-      platform: platformList[0],
+      platform: _platformList[0],
       body: new Body(
         width: width,
         height: height,
-        x: platformList[0].body.x,
-        y: getTopBoundary(platformList[0].body.y, platformList[0].body.height,
+        x: _platformList[0].body.x,
+        y: getTopBoundary(_platformList[0].body.y, _platformList[0].body.height,
                 pixelHeight) -
             height * pixelHeight / 2.0,
       ),

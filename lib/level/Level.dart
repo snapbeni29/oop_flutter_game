@@ -31,8 +31,9 @@ class Level extends ChangeNotifier {
   Level(Player player, BuildContext context) {
     _player = player;
 
-    _platformList = Layout().createPlatforms(context);
-    _enemyList = Layout().createEnemies(context, _platformList);
+    Layout layout = new Layout();
+    _platformList = layout.createPlatforms(context);
+    _enemyList = layout.createEnemies(context);
 
     _pixelWidth = 2.0 / MediaQuery.of(context).size.width;
     _pixelHeight = 2.0 / (MediaQuery.of(context).size.height * 5.0 / 7.0);
