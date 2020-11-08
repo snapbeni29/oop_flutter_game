@@ -40,6 +40,16 @@ class _ButtonJumpState extends State<ButtonJump> {
           });
         }
       },
+      // When we leave the button, we jump
+      onScaleStart: (details){
+        if(sw.isRunning) {
+          widget.start(sw.elapsedMilliseconds / 200 + _minVelocity);
+          setState(() {
+            sw.stop();
+            sw.reset();
+          });
+        }
+      },
       /* To avoid high velocities, once the contact is considered a
           "long press" (400ms), jump with the max velocity
        */

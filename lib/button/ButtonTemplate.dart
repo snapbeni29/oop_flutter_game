@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_mario/button/ButtonJump.dart';
 import 'package:flutter_app_mario/button/ButtonRun.dart';
-import 'package:flutter_app_mario/button/ButtonShoot.dart';
+import 'package:flutter_app_mario/button/ButtonInstant.dart';
 import 'package:flutter_app_mario/button/ButtonType.dart';
 
 class ButtonTemplate extends StatefulWidget{
@@ -33,7 +33,7 @@ class _ButtonState extends State<ButtonTemplate> {
       );
     }
     else{
-      return new ButtonShoot(
+      return new ButtonInstant(
         icon: widget.icon,
         start: widget.start,
       );

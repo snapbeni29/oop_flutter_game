@@ -7,8 +7,10 @@ import 'package:flutter_app_mario/player/Player.dart';
 import 'package:flutter_app_mario/hit_box/Body.dart';
 
 class Level extends ChangeNotifier {
-  //double _posX = 0.7;
-  //double _posY = 0.5;
+  // Timers
+  Timer _enemyTimer;
+  Timer _runLeftTimer;
+  Timer _runRightTimer;
 
   // Speed of movement
   double _speed = 0.025;
@@ -30,7 +32,7 @@ class Level extends ChangeNotifier {
     _player = player;
 
     _platformList = Layout().createPlatforms(context);
-    _enemyList = Layout().createEnemies(context);
+    _enemyList = Layout().createEnemies(context, _platformList);
 
     _pixelWidth = 2.0 / MediaQuery.of(context).size.width;
     _pixelHeight = 2.0 / (MediaQuery.of(context).size.height * 5.0 / 7.0);
@@ -96,39 +98,37 @@ class Level extends ChangeNotifier {
     );
   }
 
+  void end() {
+    if (_enemyTimer != null) _enemyTimer.cancel();
+    if (_runRightTimer != null) _runRightTimer.cancel();
+    if (_runLeftTimer != null) _runLeftTimer.cancel();
+
+    _player.end();
+  }
+
   // Enemy interactions -------------------------------------------------------
 
-  /* TODO: Bug solving
-      I remove a dead enemy from the list.
-      It is correctly removed for the display function,
-      but not in this timer.
-      You can see in the log that the player's health is decreasing
-      like the enemy was not dead.
-      It looks like there are two different players...
-   */
   void startMovingEnemies() {
-    Timer.periodic(Duration(milliseconds: 50), (timer) {
-      if(_enemyList.isEmpty)
-        timer.cancel();
+    _enemyTimer = Timer.periodic(Duration(milliseconds: 50), (_enemyTimer) {
+      if (_enemyList.isEmpty) {
+        _enemyTimer.cancel();
+      }
 
       if (_player.dead) {
-        print("Game over");
-        timer.cancel();
+        _enemyTimer.cancel();
       }
 
       List<Enemy> toRemove = [];
       for (Enemy enemy in _enemyList) {
         // If enemy is not dead
-          enemy.moveOnce(_player);
-          // Check if an enemy deals damage
-          if (enemy.body.collide(_player.body, _pixelWidth, _pixelHeight)) {
-            print(enemy.name);
-            _player.hurt(0.01);
-          }
-          if(enemy.dead)
-            toRemove.add(enemy);
+        enemy.moveOnce(_pixelWidth);
+        // Check if an enemy deals damage
+        if (enemy.body.collide(_player.body, _pixelWidth, _pixelHeight)) {
+          _player.hurt(0.01);
+        }
+        if (enemy.dead) toRemove.add(enemy);
       }
-      _enemyList.removeWhere( (e) => toRemove.contains(e));
+      _enemyList.removeWhere((e) => toRemove.contains(e));
 
       notifyListeners();
     });
@@ -142,7 +142,7 @@ class Level extends ChangeNotifier {
     _midRun = true;
     _player.moveLeft();
 
-    Timer.periodic(Duration(milliseconds: 50), (timer) {
+    _runLeftTimer = Timer.periodic(Duration(milliseconds: 50), (_runLeftTimer) {
       if (_midRun) {
         // Collision with a platform
         bool collision = false;
@@ -150,7 +150,7 @@ class Level extends ChangeNotifier {
           if (_player.body.collideHorizontally(
               pt.body, _player.direction, _speed, _pixelWidth, _pixelHeight)) {
             stopMoveLeft();
-            timer.cancel();
+            _runLeftTimer.cancel();
             notifyListeners();
             collision = true;
             break;
@@ -166,6 +166,8 @@ class Level extends ChangeNotifier {
               _player.fall(_platformList);
             }
           }
+          // Update player sprite
+          _player.runPos = (_player.runPos + 1) % 8;
           // Update enemies
           for (Enemy enemy in _enemyList) {
             enemy.moveLeft(_speed);
@@ -173,7 +175,7 @@ class Level extends ChangeNotifier {
           notifyListeners();
         }
       } else {
-        timer.cancel();
+        _runLeftTimer.cancel();
         notifyListeners();
       }
     });
@@ -192,7 +194,8 @@ class Level extends ChangeNotifier {
     _midRun = true;
     _player.moveRight();
 
-    Timer.periodic(Duration(milliseconds: 50), (timer) {
+    _runRightTimer =
+        Timer.periodic(Duration(milliseconds: 50), (_runRightTimer) {
       if (_midRun) {
         // Collision with a platform
         bool collision = false;
@@ -201,7 +204,7 @@ class Level extends ChangeNotifier {
               pt.body, _player.direction, _speed, _pixelWidth, _pixelHeight)) {
             //debugPrint(pt.height.toString());
             stopMoveRight();
-            timer.cancel();
+            _runRightTimer.cancel();
             notifyListeners();
             collision = true;
             break;
@@ -217,6 +220,8 @@ class Level extends ChangeNotifier {
               _player.fall(_platformList);
             }
           }
+          // Update player sprite
+          _player.runPos = (_player.runPos + 1) % 8;
           // Update enemies
           for (Enemy enemy in _enemyList) {
             enemy.moveRight(_speed);
@@ -224,7 +229,7 @@ class Level extends ChangeNotifier {
           notifyListeners();
         }
       } else {
-        timer.cancel();
+        _runRightTimer.cancel();
         notifyListeners();
       }
     });
@@ -275,4 +280,6 @@ class Level extends ChangeNotifier {
     }
     return false;
   }
+
+  Player get player => _player;
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'views/HomePage.dart';
+import 'package:flutter_app_mario/views/HomePage.dart';
+import 'package:flutter_app_mario/views/PreGamePage.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +15,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => HomePage(),
+        '/game': (context) => PreGamePage(),
+        //'/game/pause': (context) => GamePause(),
+      },
     );
   }
 }

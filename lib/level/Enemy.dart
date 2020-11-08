@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app_mario/hit_box/Body.dart';
-import 'package:flutter_app_mario/player/Player.dart';
+import 'package:flutter_app_mario/level/Platform.dart';
 
 class Enemy {
   Body body;
   int maxHealth;
   int _health;
-  int name;
+  Platform platform;
+  double speed = 0.01;
 
-  Enemy({this.body, this.maxHealth, this.name}) {
+  Enemy({this.body, this.maxHealth, this.platform}) {
     _health = maxHealth;
   }
 
@@ -16,11 +17,14 @@ class Enemy {
     return Container(
       width: body.width,
       height: body.height,
-      child: Image.asset('images/Objects/Bullet_003.png'),
+      child: FittedBox(
+        fit: BoxFit.fill,
+        child: Image.asset('images/Monsters/virus3.png'),
+      ),
     );
   }
 
-  Widget displayHealthBar(){
+  Widget displayHealthBar() {
     return Container(
       width: body.width,
       height: body.width / 10.0,
@@ -42,21 +46,20 @@ class Enemy {
     );
   }
 
-  void moveOnce(Player player) {
-    double xDirection = body.x - player.posX;
-    double yDirection = body.y - player.posY + 0.1;
-
-    if (xDirection < 0) {
-      body.x += 0.01;
+  void moveOnce(double pW) {
+    if (speed > 0) {
+      if (getRightBoundary(body.x, body.width, pW) >
+          getRightBoundary(platform.posX, platform.width, pW)) {
+        speed = -speed;
+      }
     } else {
-      body.x -= 0.01;
+      if (getLeftBoundary(body.x, body.width, pW) <
+          getLeftBoundary(platform.posX, platform.width, pW)) {
+        speed = -speed;
+      }
     }
 
-    if (yDirection < 0) {
-      body.y += 0.01;
-    } else {
-      body.y -= 0.01;
-    }
+    body.x += speed;
   }
 
   void moveLeft(double speed) {

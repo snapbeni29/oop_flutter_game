@@ -2,6 +2,6 @@
 
 enum ButtonType {
   run,
-  shoot,
+  instant,
   jump
 }

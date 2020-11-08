@@ -28,6 +28,11 @@ class Player extends ChangeNotifier {
   int _maxProjectile = 3;
   bool _firstShoot = false;
 
+  // Timers
+  Timer _projectilesTimer;
+  Timer _jumpTimer;
+  Timer _fallTimer;
+
   // Constants
   double _pixelWidth;
   double _pixelHeight;
@@ -45,6 +50,12 @@ class Player extends ChangeNotifier {
       x: 0.0,
       y: (1.0 - h * _pixelHeight / 2.0) / (1.0 - _pixelHeight * h / 2.0),
     );
+  }
+
+  void end() {
+    if (_projectilesTimer != null) _projectilesTimer.cancel();
+    if (_jumpTimer != null) _jumpTimer.cancel();
+    if (_fallTimer != null) _fallTimer.cancel();
   }
 
   // Player movement ----------------------------------------------------------
@@ -73,7 +84,7 @@ class Player extends ChangeNotifier {
 
     bool collision = false;
 
-    Timer.periodic(Duration(milliseconds: 30), (timer) {
+    _jumpTimer = Timer.periodic(Duration(milliseconds: 30), (_jumpTimer) {
       _time += 0.025;
       double prevHeight = _height;
 
@@ -94,7 +105,7 @@ class Player extends ChangeNotifier {
           _midJump = false;
           collision = true;
           _height = 0.0;
-          timer.cancel();
+          _jumpTimer.cancel();
           fall(platformList);
           break;
         }
@@ -108,7 +119,7 @@ class Player extends ChangeNotifier {
               (1 - _pixelHeight * _body.height / 2.0);
           collision = true;
           _height = 0.0;
-          timer.cancel();
+          _jumpTimer.cancel();
           break;
         }
       }
@@ -120,7 +131,7 @@ class Player extends ChangeNotifier {
           _body.y = (1.0 - _body.height * _pixelHeight / 2.0) /
               (1 - _pixelHeight * _body.height / 2.0);
           _height = 0.0;
-          timer.cancel();
+          _jumpTimer.cancel();
         } else
           body.y = _initialHeight - _height;
       }
@@ -137,7 +148,7 @@ class Player extends ChangeNotifier {
 
     bool collision = false;
 
-    Timer.periodic(Duration(milliseconds: 30), (timer) {
+    _fallTimer = Timer.periodic(Duration(milliseconds: 30), (_fallTimer) {
       _time += 0.025;
       double prevHeight = _height;
 
@@ -160,7 +171,7 @@ class Player extends ChangeNotifier {
               (1 - _pixelHeight * _body.height / 2.0);
           collision = true;
           _height = 0.0;
-          timer.cancel();
+          _fallTimer.cancel();
           break;
         }
       }
@@ -172,7 +183,7 @@ class Player extends ChangeNotifier {
           _body.y = (1.0 - _body.height * _pixelHeight / 2.0) /
               (1 - _pixelHeight * _body.height / 2.0);
           _height = 0.0;
-          timer.cancel();
+          _fallTimer.cancel();
         } else
           _body.y = _initialHeight - _height;
       }
@@ -188,8 +199,6 @@ class Player extends ChangeNotifier {
     } else if (_midFall) {
       img = Image.asset('images/Jump (9).png');
     } else if (_midRun) {
-      // Run animation : a different sprite in the pattern
-      _runPos = (_runPos + 1) % 8;
       img = Image.asset('images/Run (' + (_runPos + 1).toString() + ').png');
     } else {
       img = Image.asset('images/Idle (1).png');
@@ -249,11 +258,12 @@ class Player extends ChangeNotifier {
   }
 
   void startProjectile() {
-    Timer.periodic(Duration(milliseconds: 50), (timer) {
+    _projectilesTimer =
+        Timer.periodic(Duration(milliseconds: 50), (_projectilesTimer) {
       // Stop the timer to save power
       if (_projectileList.isEmpty) {
         _firstShoot = false;
-        timer.cancel();
+        _projectilesTimer.cancel();
       }
       for (Projectile projectile in _projectileList) {
         if (projectile.getDirection == "right") {
@@ -288,11 +298,12 @@ class Player extends ChangeNotifier {
         }
       }
 
-      if(!collide) {
+      if (!collide) {
         // Collide with an enemy
         for (Enemy enemy in enemyList) {
-          if (_projectileList[i].body.collide(
-              enemy.body, _pixelWidth, _pixelHeight)) {
+          if (_projectileList[i]
+              .body
+              .collide(enemy.body, _pixelWidth, _pixelHeight)) {
             collide = true;
             _aliveProjectile--;
             _projectileList.remove(_projectileList[i]);
@@ -332,7 +343,7 @@ class Player extends ChangeNotifier {
   Widget displayLife(double lifeWidth) {
     return Container(
       width: lifeWidth,
-      height: lifeWidth/10.0,
+      height: lifeWidth / 10.0,
       child: Container(
         alignment: Alignment.topLeft,
         decoration: BoxDecoration(
@@ -344,17 +355,15 @@ class Player extends ChangeNotifier {
         ),
         child: Container(
           width: lifeWidth * _life,
-          height: lifeWidth/10.0,
+          height: lifeWidth / 10.0,
           color: Colors.lightGreen,
         ),
       ),
     );
   }
 
-  // TODO: debug print is here
   void hurt(double damage) {
     if (_life > 0) _life = max(_life - damage, 0);
-    print(_life); // debug print
   }
 
   // Get & Set functions ------------------------------------------------------
@@ -370,4 +379,8 @@ class Player extends ChangeNotifier {
   bool get midJump => _midJump;
 
   bool get dead => _life <= 0.0;
+
+  int get runPos => _runPos;
+
+  void set runPos(int value) => _runPos = value;
 }

@@ -37,15 +37,13 @@ class _ButtonRunState extends State<ButtonRun> {
         });
         widget.end();
       },
-      // TODO : Solve bug between onTapUp and onLongPressUP
       // Release somewhere different than the button
-      onLongPressUp: (){
+      onScaleEnd: (details){
         setState(() {
           _holdingButton = false;
         });
         widget.end();
       },
-      // TODO : Same code with onTapUp and onLongPressUp
 
       child: ClipRRect(
         child: Container(
