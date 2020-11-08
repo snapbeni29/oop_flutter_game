@@ -1,23 +1,33 @@
 # Mario-like game for OOP mobile project
 
-Around 1300 lines of code so far:
-
-- Player moves freely
-
-- Collision between player and environment
-
-- Collision between projectiles and environment
-
-- Enemies move, take and deal damage
+Around 1500 lines of code so far
 
 ## Current bug to solve
 
-See level.dart line 101, it is explained there.
+Jump off platform exactly at the edge => fall + jump (pixel perfect)
+
+## For the presentation
+
+- Add comments (ex: function specification)
+
+- Find a name
+
+- What works
+
+- What we have to do next (see next section)
 
 ## What to do next
 
-- It would be easier if enemies were stuck on one platform/zone.
+- Bonuses for the player
 
-- Create the home page (start button, pause button...)
+- Boss at the end of the level
 
-- Find a name
+- Score system
+
+- Unlock a level once the previous completed
+
+- Save locally the best score for each level
+
+- Pause menu
+
+- Better home page
