@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class ButtonJump extends StatefulWidget{
+class ButtonJump extends StatefulWidget {
   final icon; // icon of the button
   final start; // function when tap
 
@@ -21,8 +21,8 @@ class _ButtonJumpState extends State<ButtonJump> {
   Widget build(BuildContext context) {
     return GestureDetector(
       // The clock starts as soon as one touches the button
-      onTapDown: (details){
-        if(!sw.isRunning) {
+      onTapDown: (details) {
+        if (!sw.isRunning) {
           setState(() {
             sw.start();
           });
@@ -31,8 +31,8 @@ class _ButtonJumpState extends State<ButtonJump> {
       /* When no more contact, jump with a velocity that depends on the
           elapsed time of the contact.
        */
-      onTapUp: (details){
-        if(sw.isRunning) {
+      onTapUp: (details) {
+        if (sw.isRunning) {
           widget.start(sw.elapsedMilliseconds / 200 + _minVelocity);
           setState(() {
             sw.stop();
@@ -41,8 +41,8 @@ class _ButtonJumpState extends State<ButtonJump> {
         }
       },
       // When we leave the button, we jump
-      onScaleStart: (details){
-        if(sw.isRunning) {
+      onScaleStart: (details) {
+        if (sw.isRunning) {
           widget.start(sw.elapsedMilliseconds / 200 + _minVelocity);
           setState(() {
             sw.stop();
@@ -53,8 +53,8 @@ class _ButtonJumpState extends State<ButtonJump> {
       /* To avoid high velocities, once the contact is considered a
           "long press" (400ms), jump with the max velocity
        */
-      onLongPressStart: (details){
-        if(sw.isRunning) {
+      onLongPressStart: (details) {
+        if (sw.isRunning) {
           widget.start(sw.elapsedMilliseconds / 200 + _minVelocity);
           setState(() {
             sw.stop();
@@ -62,7 +62,6 @@ class _ButtonJumpState extends State<ButtonJump> {
           });
         }
       },
-      // TODO : Same code with onTapUp and onLongPressStart
 
       child: ClipRRect(
         child: Container(

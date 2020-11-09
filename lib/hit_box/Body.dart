@@ -1,4 +1,11 @@
+/*
+  A Body is a useful class that defines a size (width & height) and a position
+  (coordinates x & y). Two bodies can collide in a specific direction
+  (collideHorizontally & collideVertically), or simply overlap (collide).
+ */
+
 class Body {
+  // Defines the size of the body
   double width, height;
 
   // Defines the center of the body
@@ -7,7 +14,7 @@ class Body {
   Body({this.width, this.height, this.x, this.y});
 
   /*
-    this goes in direction
+    'this' goes in 'direction'
     return true if this collides with other horizontally
    */
   bool collideHorizontally(
@@ -100,6 +107,12 @@ class Body {
     return true;
   }
 }
+
+/*
+  Helper functions
+  -> dynamically gets the boundaries of a body on the screen,
+     based on a coordinate and a length
+ */
 
 double getBottomBoundary(double posY, double height, double pixelHeight) {
   double bottomPart = 0.5 - posY / 2;

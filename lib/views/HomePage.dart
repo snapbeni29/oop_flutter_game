@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_mario/button/ButtonTemplate.dart';
 import 'package:flutter_app_mario/button/ButtonType.dart';
 
+/*
+  The home page consists in a list of levels to play.
+  Each level button is represented by a widget _LevelWidget.
+    Such a widget is a box that contains the number of the level
+    and a button to start this level.
+    When one presses the button, the page PreGamePage starts
+    (route '/game'). The number of the level is an argument that
+    can be used in PreGamePage.
+ */
+
 class HomePage extends StatelessWidget {
   final int _numberOfLevels = 5;
 

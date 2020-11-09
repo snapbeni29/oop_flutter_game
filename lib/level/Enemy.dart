@@ -46,6 +46,7 @@ class Enemy {
     );
   }
 
+  // An enemy moves on its assigned platform
   void moveOnce(double pW) {
     if (speed > 0) {
       if (getRightBoundary(body.x, body.width, pW) >

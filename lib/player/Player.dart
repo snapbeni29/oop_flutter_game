@@ -15,7 +15,7 @@ class Player extends ChangeNotifier {
   bool _midRun = false;
   bool _midJump = false;
   bool _midFall = false;
-  int _runPos = 0;
+  int runPos = 0;
 
   // Variables to deal with gravity
   double _time = 0.0;
@@ -52,6 +52,7 @@ class Player extends ChangeNotifier {
     );
   }
 
+  // Stop all timers
   void end() {
     if (_projectilesTimer != null) _projectilesTimer.cancel();
     if (_jumpTimer != null) _jumpTimer.cancel();
@@ -199,7 +200,7 @@ class Player extends ChangeNotifier {
     } else if (_midFall) {
       img = Image.asset('images/Jump (9).png');
     } else if (_midRun) {
-      img = Image.asset('images/Run (' + (_runPos + 1).toString() + ').png');
+      img = Image.asset('images/Run (' + (runPos + 1).toString() + ').png');
     } else {
       img = Image.asset('images/Idle (1).png');
     }
@@ -379,8 +380,4 @@ class Player extends ChangeNotifier {
   bool get midJump => _midJump;
 
   bool get dead => _life <= 0.0;
-
-  int get runPos => _runPos;
-
-  void set runPos(int value) => _runPos = value;
 }

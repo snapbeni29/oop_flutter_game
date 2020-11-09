@@ -4,6 +4,15 @@ import 'package:flutter_app_mario/button/ButtonRun.dart';
 import 'package:flutter_app_mario/button/ButtonInstant.dart';
 import 'package:flutter_app_mario/button/ButtonType.dart';
 
+/*
+  This class creates a special button depending on the type
+  (cfr. ButtonType).
+
+  TODO: currently, it is not really a 'template' and it is not really
+    necessary (we could simply create a ButtonRun directly e.g.)
+      To modify if possible, else remove
+ */
+
 class ButtonTemplate extends StatefulWidget{
   final ButtonType type;
   final icon; // icon of the button

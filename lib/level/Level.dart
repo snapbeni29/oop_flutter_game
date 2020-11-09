@@ -31,6 +31,7 @@ class Level extends ChangeNotifier {
   Level(Player player, BuildContext context) {
     _player = player;
 
+    // Get the layout of the level
     Layout layout = new Layout();
     _platformList = layout.createPlatforms(context);
     _enemyList = layout.createEnemies(context);
@@ -99,6 +100,9 @@ class Level extends ChangeNotifier {
     );
   }
 
+  /* Stop all timers.
+    Called when we exit the game.
+   */
   void end() {
     if (_enemyTimer != null) _enemyTimer.cancel();
     if (_runRightTimer != null) _runRightTimer.cancel();
@@ -114,9 +118,9 @@ class Level extends ChangeNotifier {
       if (_enemyList.isEmpty) {
         _enemyTimer.cancel();
       }
-
       if (_player.dead) {
         _enemyTimer.cancel();
+        // TODO: Game over
       }
 
       List<Enemy> toRemove = [];
@@ -127,6 +131,7 @@ class Level extends ChangeNotifier {
         if (enemy.body.collide(_player.body, _pixelWidth, _pixelHeight)) {
           _player.hurt(0.01);
         }
+        // Remove the dead enemies
         if (enemy.dead) toRemove.add(enemy);
       }
       _enemyList.removeWhere((e) => toRemove.contains(e));
@@ -251,6 +256,7 @@ class Level extends ChangeNotifier {
     _player.fall(_platformList);
   }
 
+  // Return true if the player is walking off a platform
   bool isFalling(Platform pt, String direction) {
     if (direction == "right") {
       // If left part of player is no more on the platform => fall

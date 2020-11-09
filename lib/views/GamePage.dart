@@ -5,6 +5,12 @@ import 'package:flutter_app_mario/button/ButtonTemplate.dart';
 import 'package:flutter_app_mario/player/Player.dart';
 import 'package:provider/provider.dart';
 
+/*
+  The game page is divided into two parts:
+    Some space for the level + a pause button (top)
+    Some space for the buttons (bottom)
+ */
+
 class GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

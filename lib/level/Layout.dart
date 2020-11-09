@@ -3,6 +3,13 @@ import 'package:flutter_app_mario/hit_box/Body.dart';
 import 'package:flutter_app_mario/level/Enemy.dart';
 import 'package:flutter_app_mario/level/Platform.dart';
 
+/*
+  A layout represents a level.
+  A layout consists in a set of platforms and a set of enemies
+    When a Level is created, it first uses createPlatforms(),
+    then createEnemies(), because enemies can be associated to a platform.
+ */
+
 class Layout {
   List<Platform> _platformList;
 

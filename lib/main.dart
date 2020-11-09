@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
         '/game': (context) => PreGamePage(),
-        //'/game/pause': (context) => GamePause(),
       },
     );
   }
