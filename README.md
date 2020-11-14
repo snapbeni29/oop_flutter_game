@@ -1,33 +1,16 @@
-# Mario-like game for OOP mobile project
+# flutter_app_oop_2
 
-Around 1500 lines of code so far
+A new Flutter application.
 
-## Current bug to solve
+## Getting Started
 
-Jump off platform exactly at the edge => fall + jump (pixel perfect)
+This project is a starting point for a Flutter application.
 
-## For the presentation
+A few resources to get you started if this is your first Flutter project:
 
-- Add comments (ex: function specification)
+- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
+- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
-- Find a name
-
-- What works
-
-- What we have to do next (see next section)
-
-## What to do next
-
-- Bonuses for the player
-
-- Boss at the end of the level
-
-- Score system
-
-- Unlock a level once the previous completed
-
-- Save locally the best score for each level
-
-- Pause menu
-
-- Better home page
+For help getting started with Flutter, view our
+[online documentation](https://flutter.dev/docs), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.

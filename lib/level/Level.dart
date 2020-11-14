@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app_mario/level/Enemy.dart';
 import 'package:flutter_app_mario/level/Layout.dart';
@@ -11,6 +12,13 @@ class Level extends ChangeNotifier {
   Timer _enemyTimer;
   Timer _runLeftTimer;
   Timer _runRightTimer;
+
+  // Pause variables to momentarily stop the game
+  // Initially it's false and when pushing pause button it is set to true
+  bool _pause = false;
+
+  // Value of the score reached by the player, evolve during the level
+  double score = 0;
 
   // Speed of movement
   double _speed = 0.025;
@@ -103,40 +111,96 @@ class Level extends ChangeNotifier {
   /* Stop all timers.
     Called when we exit the game.
    */
-  void end() {
+  void end(BuildContext context) {
     if (_enemyTimer != null) _enemyTimer.cancel();
     if (_runRightTimer != null) _runRightTimer.cancel();
     if (_runLeftTimer != null) _runLeftTimer.cancel();
 
     _player.end();
+    // First pop to get out of the alert dialog
+    Navigator.of(context).pop();
+    // Second pop to go to the Home Page
+    Navigator.of(context).pop();
+  }
+
+  /* Pause the game
+   */
+  pause(BuildContext context) {
+    _pause = true;
+    _player.pause = true;
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+          title: Center(child: Text("Menu")),
+          backgroundColor: Colors.blueAccent,
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              RaisedButton(
+                elevation: 2.0,
+                onPressed: (){
+                  end(context);
+                },
+                child: Text("Go to Level Menu"),
+                color: Colors.greenAccent,
+              ),
+              RaisedButton(
+                elevation: 2.0,
+                onPressed: (){
+                  restart();
+                  Navigator.of(context).pop();
+                },
+                child: Text("Resume the Level"),
+                color: Colors.greenAccent
+              ),
+            ],
+          ),
+          elevation: 10.0,
+        );
+      },
+    );
+  }
+
+  /* restart the game
+   */
+  void restart() {
+    _player.pause = false;
+    _pause = false;
   }
 
   // Enemy interactions -------------------------------------------------------
 
   void startMovingEnemies() {
     _enemyTimer = Timer.periodic(Duration(milliseconds: 50), (_enemyTimer) {
-      if (_enemyList.isEmpty) {
-        _enemyTimer.cancel();
-      }
-      if (_player.dead) {
-        _enemyTimer.cancel();
-        // TODO: Game over
-      }
-
-      List<Enemy> toRemove = [];
-      for (Enemy enemy in _enemyList) {
-        // If enemy is not dead
-        enemy.moveOnce(_pixelWidth);
-        // Check if an enemy deals damage
-        if (enemy.body.collide(_player.body, _pixelWidth, _pixelHeight)) {
-          _player.hurt(0.01);
+      if(!_pause) {
+        if (_enemyList.isEmpty) {
+          _enemyTimer.cancel();
         }
-        // Remove the dead enemies
-        if (enemy.dead) toRemove.add(enemy);
-      }
-      _enemyList.removeWhere((e) => toRemove.contains(e));
+        if (_player.dead) {
+          _enemyTimer.cancel();
+          // TODO: Game over
+        }
 
-      notifyListeners();
+        List<Enemy> toRemove = [];
+        for (Enemy enemy in _enemyList) {
+          // If enemy is not dead
+          enemy.moveOnce(_pixelWidth);
+          // Check if an enemy deals damage
+          if (enemy.body.collide(_player.body, _pixelWidth, _pixelHeight)) {
+            _player.hurt(0.01);
+          }
+          // Remove the dead enemies
+          if (enemy.dead){
+            toRemove.add(enemy);
+            score += 100;
+          }
+        }
+        _enemyList.removeWhere((e) => toRemove.contains(e));
+
+        notifyListeners();
+      }
     });
   }
 
@@ -250,6 +314,10 @@ class Level extends ChangeNotifier {
 
   void jump(double velocity) {
     _player.jump(velocity, _platformList);
+  }
+
+  void shoot(_){
+    _player.shoot();
   }
 
   void fall() {

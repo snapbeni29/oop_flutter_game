@@ -30,16 +30,22 @@ class GamePage extends StatelessWidget {
                       children: [
                         level.displayLevel(),
                         Container(
-                          alignment: Alignment(-0.9, -0.9),
+                          alignment: Alignment(-0.9, -0.8),
                           child: ButtonTemplate(
                             type: ButtonType.instant,
                             icon: Icon(Icons.pause),
-                            start: () {
-                              level.end();
-                              Navigator.pop(context);
-                            },
+                            start: level.pause,
                           ),
                         ),
+                        Container(
+                          alignment: Alignment(0.9, -0.8),
+                          child: Text(
+                            "Score: " + level.score.toString(),
+                            style: TextStyle(
+                              fontSize: 24.0,
+                            ),
+                          ),
+                        )
                       ],
                     ),
                   ),
@@ -66,7 +72,7 @@ class GamePage extends StatelessWidget {
                         ButtonTemplate(
                           type: ButtonType.instant,
                           icon: Icon(Icons.whatshot),
-                          start: player.shoot,
+                          start: level.shoot,
                         ),
                         ButtonTemplate(
                           type: ButtonType.run,

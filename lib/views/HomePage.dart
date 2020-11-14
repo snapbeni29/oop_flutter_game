@@ -20,7 +20,10 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Name to find"),
+        title: Text(
+          "CoronaBot",
+          style: TextStyle(fontFamily: "Cs"),
+        ),
       ),
       body: new ListView.builder(
         padding: EdgeInsets.all(20),
@@ -56,11 +59,14 @@ class _LevelWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text('Level ' + (levelNumber + 1).toString(),
-              textAlign: TextAlign.center),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20.0,
+              )),
           ButtonTemplate(
             type: ButtonType.instant,
             icon: Icon(Icons.play_arrow),
-            start: () => Navigator.pushNamed((context), '/game',
+            start: (_) => Navigator.pushNamed((context), '/game',
                 arguments: levelNumber + 1),
           ),
         ],

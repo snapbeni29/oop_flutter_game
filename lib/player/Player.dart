@@ -17,6 +17,8 @@ class Player extends ChangeNotifier {
   bool _midFall = false;
   int runPos = 0;
 
+  bool _pause = false;
+
   // Variables to deal with gravity
   double _time = 0.0;
   double _height = 0.0;
@@ -86,58 +88,60 @@ class Player extends ChangeNotifier {
     bool collision = false;
 
     _jumpTimer = Timer.periodic(Duration(milliseconds: 30), (_jumpTimer) {
-      _time += 0.025;
-      double prevHeight = _height;
+      if(!_pause) {
+        _time += 0.025;
+        double prevHeight = _height;
 
-      // Gravity equation
-      _height = -4.9 * _time * _time + velocity * _time;
+        // Gravity equation
+        _height = -4.9 * _time * _time + velocity * _time;
 
-      _verticalDirection = prevHeight < _height ? "up" : "down";
-      double speed =
-          prevHeight < _height ? _height - prevHeight : prevHeight - _height;
+        _verticalDirection = prevHeight < _height ? "up" : "down";
+        double speed =
+        prevHeight < _height ? _height - prevHeight : prevHeight - _height;
 
-      // Collision detection with a platform
-      collision = false;
-      for (Platform pt in platformList) {
-        // Bump into a platform while jumping up
-        if (_verticalDirection == "up" &&
-            _body.collideVertically(pt.body, _verticalDirection, speed,
-                _pixelWidth, _pixelHeight)) {
-          _midJump = false;
-          collision = true;
-          _height = 0.0;
-          _jumpTimer.cancel();
-          fall(platformList);
-          break;
+        // Collision detection with a platform
+        collision = false;
+        for (Platform pt in platformList) {
+          // Bump into a platform while jumping up
+          if (_verticalDirection == "up" &&
+              _body.collideVertically(pt.body, _verticalDirection, speed,
+                  _pixelWidth, _pixelHeight)) {
+            _midJump = false;
+            collision = true;
+            _height = 0.0;
+            _jumpTimer.cancel();
+            fall(platformList);
+            break;
+          }
+          // Land onto a platform
+          else if (_verticalDirection == "down" &&
+              _body.collideVertically(pt.body, _verticalDirection, speed,
+                  _pixelWidth, _pixelHeight)) {
+            _midJump = false;
+            _body.y = (getTopBoundary(pt.posY, pt.height, _pixelHeight) -
+                _body.height * _pixelHeight / 2.0) /
+                (1 - _pixelHeight * _body.height / 2.0);
+            collision = true;
+            _height = 0.0;
+            _jumpTimer.cancel();
+            break;
+          }
         }
-        // Land onto a platform
-        else if (_verticalDirection == "down" &&
-            _body.collideVertically(pt.body, _verticalDirection, speed,
-                _pixelWidth, _pixelHeight)) {
-          _midJump = false;
-          _body.y = (getTopBoundary(pt.posY, pt.height, _pixelHeight) -
-                  _body.height * _pixelHeight / 2.0) /
-              (1 - _pixelHeight * _body.height / 2.0);
-          collision = true;
-          _height = 0.0;
-          _jumpTimer.cancel();
-          break;
+
+        if (!collision) {
+          // Land on the ground
+          if (_initialHeight - _height > 1.0) {
+            _midJump = false;
+            _body.y = (1.0 - _body.height * _pixelHeight / 2.0) /
+                (1 - _pixelHeight * _body.height / 2.0);
+            _height = 0.0;
+            _jumpTimer.cancel();
+          } else
+            body.y = _initialHeight - _height;
         }
-      }
 
-      if (!collision) {
-        // Land on the ground
-        if (_initialHeight - _height > 1.0) {
-          _midJump = false;
-          _body.y = (1.0 - _body.height * _pixelHeight / 2.0) /
-              (1 - _pixelHeight * _body.height / 2.0);
-          _height = 0.0;
-          _jumpTimer.cancel();
-        } else
-          body.y = _initialHeight - _height;
+        notifyListeners();
       }
-
-      notifyListeners();
     });
   }
 
@@ -150,46 +154,48 @@ class Player extends ChangeNotifier {
     bool collision = false;
 
     _fallTimer = Timer.periodic(Duration(milliseconds: 30), (_fallTimer) {
-      _time += 0.025;
-      double prevHeight = _height;
+      if(!_pause) {
+        _time += 0.025;
+        double prevHeight = _height;
 
-      // Gravity equation
-      _height = -4.9 * _time * _time;
+        // Gravity equation
+        _height = -4.9 * _time * _time;
 
-      double speed =
-          prevHeight < _height ? _height - prevHeight : prevHeight - _height;
+        double speed =
+        prevHeight < _height ? _height - prevHeight : prevHeight - _height;
 
-      // Collision detection
-      collision = false;
-      for (Platform pt in platformList) {
-        // Land onto a platform
-        if (_verticalDirection == "down" &&
-            _body.collideVertically(pt.body, _verticalDirection, speed,
-                _pixelWidth, _pixelHeight)) {
-          _midFall = false;
-          _body.y = (getTopBoundary(pt.posY, pt.height, _pixelHeight) -
-                  _body.height * _pixelHeight / 2.0) /
-              (1 - _pixelHeight * _body.height / 2.0);
-          collision = true;
-          _height = 0.0;
-          _fallTimer.cancel();
-          break;
+        // Collision detection
+        collision = false;
+        for (Platform pt in platformList) {
+          // Land onto a platform
+          if (_verticalDirection == "down" &&
+              _body.collideVertically(pt.body, _verticalDirection, speed,
+                  _pixelWidth, _pixelHeight)) {
+            _midFall = false;
+            _body.y = (getTopBoundary(pt.posY, pt.height, _pixelHeight) -
+                _body.height * _pixelHeight / 2.0) /
+                (1 - _pixelHeight * _body.height / 2.0);
+            collision = true;
+            _height = 0.0;
+            _fallTimer.cancel();
+            break;
+          }
         }
-      }
 
-      if (!collision) {
-        // Land on the ground
-        if (_initialHeight - _height > 1.0) {
-          _midFall = false;
-          _body.y = (1.0 - _body.height * _pixelHeight / 2.0) /
-              (1 - _pixelHeight * _body.height / 2.0);
-          _height = 0.0;
-          _fallTimer.cancel();
-        } else
-          _body.y = _initialHeight - _height;
-      }
+        if (!collision) {
+          // Land on the ground
+          if (_initialHeight - _height > 1.0) {
+            _midFall = false;
+            _body.y = (1.0 - _body.height * _pixelHeight / 2.0) /
+                (1 - _pixelHeight * _body.height / 2.0);
+            _height = 0.0;
+            _fallTimer.cancel();
+          } else
+            _body.y = _initialHeight - _height;
+        }
 
-      notifyListeners();
+        notifyListeners();
+      }
     });
   }
 
@@ -261,19 +267,22 @@ class Player extends ChangeNotifier {
   void startProjectile() {
     _projectilesTimer =
         Timer.periodic(Duration(milliseconds: 50), (_projectilesTimer) {
-      // Stop the timer to save power
-      if (_projectileList.isEmpty) {
-        _firstShoot = false;
-        _projectilesTimer.cancel();
-      }
-      for (Projectile projectile in _projectileList) {
-        if (projectile.getDirection == "right") {
-          projectile.moveRight();
-        } else {
-          projectile.moveLeft();
+          debugPrint(_pause.toString());
+      if (!_pause) {
+        // Stop the timer to save power
+        if (_projectileList.isEmpty) {
+          _firstShoot = false;
+          _projectilesTimer.cancel();
         }
+        for (Projectile projectile in _projectileList) {
+          if (projectile.getDirection == "right") {
+            projectile.moveRight();
+          } else {
+            projectile.moveLeft();
+          }
+        }
+        notifyListeners();
       }
-      notifyListeners();
     });
   }
 
@@ -380,4 +389,6 @@ class Player extends ChangeNotifier {
   bool get midJump => _midJump;
 
   bool get dead => _life <= 0.0;
+
+  void set pause(bool value) => _pause = value;
 }
