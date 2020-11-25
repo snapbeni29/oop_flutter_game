@@ -1,13 +1,14 @@
+import 'package:corona_bot/pages/PreGamePage.dart';
+import 'package:corona_bot/pages/ShopPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_app_mario/views/HomePage.dart';
-import 'package:flutter_app_mario/views/PreGamePage.dart';
+import 'package:corona_bot/pages/HomePage.dart';
 
 void main() {
   runApp(MyApp());
-
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]);
+  SystemChrome.setEnabledSystemUIOverlays([]);
 }
 
 class MyApp extends StatelessWidget {
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => HomePage(),
         '/game': (context) => PreGamePage(),
+        '/shop': (context) => ShopPage(),
       },
     );
   }
