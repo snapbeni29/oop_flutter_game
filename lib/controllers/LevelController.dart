@@ -38,6 +38,7 @@ class LevelController extends ChangeNotifier {
   bool _pause = false;
 
   bool _midRun = false;
+  bool _collision = false;
 
   // Value that depend on the device
   double _pixelWidth;
@@ -79,7 +80,7 @@ class LevelController extends ChangeNotifier {
   /// Calls the view
   Widget displayLevel() {
     return _view.displayLevel(_player, _platformList, _enemyList, _boss,
-        _collectableList, _pixelHeight);
+        _collectableList, _pixelHeight, _collision);
   }
 
   // Game actions --------------------------------------------------------------
@@ -350,19 +351,16 @@ class LevelController extends ChangeNotifier {
       if (!_pause) {
         if (_midRun) {
           // Collision with a platform
-          bool collision = false;
+          _collision = false;
           for (PlatformController pt in _platformList) {
             if (_player.body.collideHorizontally(
                 pt.body, _player.direction, SPEED, _pixelWidth, _pixelHeight)) {
-              stopMoveRight();
-              _runRightTimer.cancel();
-              //notifyListeners();
-              collision = true;
+              _collision = true;
               break;
             }
           }
 
-          if (!collision) {
+          if (!_collision) {
             // Update platforms
             for (PlatformController pt in _platformList) {
               pt.moveRight();
@@ -383,11 +381,9 @@ class LevelController extends ChangeNotifier {
             _boss.moveRight();
             // Update player and projectiles
             _player.moveRight();
-            //notifyListeners();
           }
         } else {
           _runRightTimer.cancel();
-          //notifyListeners();
         }
       }
     });
@@ -397,6 +393,7 @@ class LevelController extends ChangeNotifier {
   /// stop running.
   void stopMoveRight() {
     if (_player.direction == Direction.RIGHT) {
+      _runRightTimer.cancel();
       _midRun = false;
       _player.stopRun();
     }
@@ -414,19 +411,16 @@ class LevelController extends ChangeNotifier {
       if (!_pause) {
         if (_midRun) {
           // Collision with a platform
-          bool collision = false;
+          _collision = false;
           for (PlatformController pt in _platformList) {
             if (_player.body.collideHorizontally(
                 pt.body, _player.direction, SPEED, _pixelWidth, _pixelHeight)) {
-              stopMoveLeft();
-              _runLeftTimer.cancel();
-              //notifyListeners();
-              collision = true;
+              _collision = true;
               break;
             }
           }
 
-          if (!collision) {
+          if (!_collision) {
             // Update platforms
             for (PlatformController pt in _platformList) {
               pt.moveLeft();
@@ -447,11 +441,9 @@ class LevelController extends ChangeNotifier {
             }
             // Update player and projectiles
             _player.moveLeft();
-            //notifyListeners();
           }
         } else {
           _runLeftTimer.cancel();
-          //notifyListeners();
         }
       }
     });
@@ -461,6 +453,7 @@ class LevelController extends ChangeNotifier {
   /// stop running.
   void stopMoveLeft() {
     if (_player.direction == Direction.LEFT) {
+      _runLeftTimer.cancel();
       _midRun = false;
       _player.stopRun();
     }

@@ -7,8 +7,9 @@ class EnemyModel extends ObstacleModel {
   int _health;
   Body area;
   double _speed = ENEMY_SPEED;
+  int type;
 
-  EnemyModel({Body body, this.maxHealth, this.area})
+  EnemyModel({Body body, this.maxHealth, this.area, this.type})
       : _health = maxHealth,
         super(body: body);
 

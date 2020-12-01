@@ -105,6 +105,7 @@ class Layout {
         y: bossLevel.y,
       ),
       player,
+      4,
     );
   }
 

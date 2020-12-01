@@ -18,6 +18,11 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
   double _lifeWidth;
   bool _pause = false;
 
+  // Variables from the shop
+  String _hat;
+  bool _doubleJump;
+  bool secondJump = false;
+
   // Variables to deal with gravity
   double _time = 0.0;
   double _height = 0.0;
@@ -30,13 +35,16 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
   Stopwatch _redPotTimer = Stopwatch();
   Stopwatch _bluePotTimer = Stopwatch();
 
-  PlayerController(BuildContext context) {
+  PlayerController(
+      BuildContext context, this._hat, this._doubleJump, int maxProjectiles) {
     pixelWidth = 2.0 / MediaQuery.of(context).size.width;
     pixelHeight = 2.0 / (MediaQuery.of(context).size.height * 5.0 / 7.0);
     _lifeWidth = MediaQuery.of(context).size.width / 3.0;
 
     _model = new PlayerModel();
     _view = new PlayerView();
+
+    maxProjectile = maxProjectiles;
 
     double w = MediaQuery.of(context).size.width / 14.0;
     double h = (MediaQuery.of(context).size.height * 5.0 / 7.0) / 5;
@@ -86,11 +94,18 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
   // Jump related functions ----------------------------------------------------
 
   void jump(double velocity, List<PlatformController> platformList) {
-    // No double jump allowed
-    if (_model.vertical != Direction.STILL) return;
+    if (!_doubleJump && _model.vertical != Direction.STILL) return;
+    if (_doubleJump && secondJump) return;
+    if (_doubleJump && _model.vertical == Direction.UP ||
+        _model.vertical == Direction.DOWN) {
+      secondJump = true;
+    }
+
+    if (_jumpTimer != null) _jumpTimer.cancel();
 
     _time = 0;
     _initialHeight = _body.y;
+    _height = 0;
 
     _jumpTimer = Timer.periodic(Duration(milliseconds: 50), (_jumpTimer) {
       if (!_pause) {
@@ -111,8 +126,10 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
           if (_model.vertical == Direction.UP &&
               _body.collideVertically(
                   pt.body, _model.vertical, speed, pixelWidth, pixelHeight)) {
+            print("collide platform");
             collision = true;
             _model.jump = Direction.STILL;
+            secondJump = false;
             _height = 0.0;
             _jumpTimer.cancel();
             fall(platformList);
@@ -128,6 +145,7 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
             collision = true;
             _height = 0.0;
             _model.jump = Direction.STILL;
+            secondJump = false;
             _jumpTimer.cancel();
             break;
           }
@@ -137,14 +155,13 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
           // Land on the ground
           if (_initialHeight - _height > 1.0) {
             _model.jump = Direction.STILL;
+            secondJump = false;
             _body.y = 1.0;
             _height = 0.0;
             _jumpTimer.cancel();
           } else
             _body.y = _initialHeight - _height;
         }
-
-        //notifyListeners();
       }
     });
   }
@@ -155,29 +172,33 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
 
   /// Checks if the player is falling from a platform, to start fall().
   bool isFallingOfPlatform(PlatformController pt) {
-    if (_model.horizontal == Direction.RIGHT) {
-      // If left part of player is no more on the platform => fall
-      if (pt.body.getRightBoundary(pixelWidth) + SPEED >
-              _body.getLeftBoundary(pixelWidth) &&
-          pt.body.getRightBoundary(pixelWidth) <
-              _body.getLeftBoundary(pixelWidth) &&
-          // Here we check that the player is on the platform
-          pt.body.getTopBoundary(pixelHeight) >
-              _body.getBottomBoundary(pixelHeight) - 0.05) {
-        return true;
+    if (_model.vertical == Direction.STILL) {
+      if (_model.horizontal == Direction.RIGHT) {
+        // If left part of player is no more on the platform => fall
+        if (pt.body.getRightBoundary(pixelWidth) + SPEED >
+                _body.getLeftBoundary(pixelWidth) &&
+            pt.body.getRightBoundary(pixelWidth) <
+                _body.getLeftBoundary(pixelWidth) &&
+            // Here we check that the player is on the platform
+            pt.body.getTopBoundary(pixelHeight) >
+                _body.getBottomBoundary(pixelHeight) - 0.05) {
+          return true;
+        }
+      } else {
+        // If right part of player is no more on the platform => fall
+        if (pt.body.getLeftBoundary(pixelWidth) - SPEED <
+                _body.getRightBoundary(pixelWidth) &&
+            pt.body.getLeftBoundary(pixelWidth) >
+                _body.getRightBoundary(pixelWidth) &&
+            // Here we check that the player is on the platform
+            pt.body.getTopBoundary(pixelHeight) >
+                _body.getBottomBoundary(pixelHeight) - 0.05) {
+          return true;
+        }
       }
-    } else {
-      // If right part of player is no more on the platform => fall
-      if (pt.body.getLeftBoundary(pixelWidth) - SPEED <
-              _body.getRightBoundary(pixelWidth) &&
-          pt.body.getLeftBoundary(pixelWidth) >
-              _body.getRightBoundary(pixelWidth) &&
-          // Here we check that the player is on the platform
-          pt.body.getTopBoundary(pixelHeight) >
-              _body.getBottomBoundary(pixelHeight) - 0.05) {
-        return true;
-      }
+      return false;
     }
+
     return false;
   }
 
@@ -212,7 +233,6 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
         for (ProjectileController projectile in projectileList) {
           projectile.travel();
         }
-        //notifyListeners();
       }
     });
   }
@@ -240,7 +260,7 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
         }
       }
       // Collide with the boss
-      if(!boss.dead) {
+      if (!boss.dead) {
         if (projectile.body.collide(boss.body, pixelWidth, pixelHeight)) {
           aliveProjectile--;
           toRemove.add(projectile);
@@ -314,7 +334,7 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
 
   // Display -------------------------------------------------------------------
 
-  Widget displayPlayer() {
+  Widget displayPlayer(bool collision) {
     // After 5sec (10sec) the redPot (bluePot) stops
     // We put that here since this function is called every 50ms
     if (_redPotTimer.elapsedMilliseconds > 5000) {
@@ -328,13 +348,16 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
     }
 
     return _view.displayPlayer(
-        _model.sprite,
-        _model.vertical,
-        _model.horizontal,
-        _body.width,
-        _body.height,
-        _redPotTimer.isRunning,
-        _bluePotTimer.isRunning);
+      _model.sprite,
+      _model.vertical,
+      _model.horizontal,
+      _body.width,
+      _body.height,
+      _redPotTimer.isRunning,
+      _bluePotTimer.isRunning,
+      collision,
+      _hat,
+    );
   }
 
   Widget displayPlayerLife() {

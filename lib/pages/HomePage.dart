@@ -18,6 +18,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int coins;
   List<String> scoreLevel;
+  bool doubleJump;
+  String hat;
+  int projectiles;
 
   @override
   void initState() {
@@ -25,12 +28,15 @@ class _HomePageState extends State<HomePage> {
     getData();
   }
 
-  /// Load the data in the variables "coins" and "scoreLevel"
+  /// Load the data in the variables
   void getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       coins = prefs.getInt('coins') ?? 0;
       scoreLevel = prefs.getStringList('scoreLevel');
+      hat = prefs.getString('hat') ?? '';
+      doubleJump = prefs.getBool("Double Jump") ?? false;
+      projectiles = prefs.getInt("projectiles") ?? INIT_PROJECTILE;
     });
   }
 
@@ -40,6 +46,7 @@ class _HomePageState extends State<HomePage> {
       // AppBar ----------------------------------------------------------------
       appBar: AppBar(
         centerTitle: true,
+        backgroundColor: APPBAR_COLOR,
         title: Text(
           "CoronaBot",
           style: TextStyle(fontFamily: "Cs"),
@@ -94,23 +101,33 @@ class _HomePageState extends State<HomePage> {
                   if (index > 0) {
                     if (scoreLevel != null) {
                       if (index == scoreLevel.length)
-                        return _LevelWidget(index, false);
+                        return _LevelWidget(
+                            index, doubleJump, hat, projectiles, false);
                       if (index < scoreLevel.length)
                         return _LevelWidget(
                           index,
+                          doubleJump,
+                          hat,
+                          projectiles,
                           false,
                           score: double.parse(scoreLevel[index].split(":")[1]),
                         );
-                      return _LevelWidget(index, true);
+                      return _LevelWidget(
+                          index, doubleJump, hat, projectiles, true);
                     } else {
-                      return _LevelWidget(index, true);
+                      return _LevelWidget(
+                          index, doubleJump, hat, projectiles, true);
                     }
                   } else {
                     if (scoreLevel == null) {
-                      return _LevelWidget(index, false);
+                      return _LevelWidget(
+                          index, doubleJump, hat, projectiles, false);
                     } else {
                       return _LevelWidget(
                         index,
+                        doubleJump,
+                        hat,
+                        projectiles,
                         false,
                         score: double.parse(scoreLevel[index].split(":")[1]),
                       );
@@ -129,10 +146,14 @@ class _HomePageState extends State<HomePage> {
 class _LevelWidget extends StatelessWidget {
   final int levelNumber;
   final bool locked;
+  final String hat;
+  final bool doubleJump;
+  final int projectiles;
 
   final double score;
 
-  _LevelWidget(this.levelNumber, this.locked, {this.score});
+  _LevelWidget(this.levelNumber, this.doubleJump, this.hat, this.projectiles,
+      this.locked, {this.score});
 
   @override
   Widget build(BuildContext context) {
@@ -170,9 +191,17 @@ class _LevelWidget extends StatelessWidget {
           // Can be locked or not
           RaisedButton(
             onPressed: () {
+              // args[0] is lvl number
+              // args[1] is the hat
+              // args[2] is the doubleJump
+              // args[3] number of projectiles
+              List<dynamic> args = <dynamic>[];
+              args.add(levelNumber + 1);
+              args.add(hat);
+              args.add(doubleJump);
+              args.add(projectiles);
               if (!locked) {
-                Navigator.pushNamed((context), '/game',
-                    arguments: levelNumber + 1);
+                Navigator.pushNamed((context), '/game', arguments: args);
               }
             },
             child: locked ? Icon(Icons.lock_outline) : Icon(Icons.play_arrow),

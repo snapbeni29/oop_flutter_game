@@ -17,9 +17,9 @@ class BossController extends EnemyController with ShooterMixin {
   bool _pause = false;
   PlayerController _player;
 
-  BossController(
-      double pw, double ph, Body body, Body area, PlayerController player)
-      : super(body, BOSS_HEALTH, area) {
+  BossController(double pw, double ph, Body body, Body area,
+      PlayerController player, int type)
+      : super(body, BOSS_HEALTH, area, type: type) {
     pixelWidth = pw;
     pixelHeight = ph;
     _player = player;
@@ -94,7 +94,7 @@ class BossController extends EnemyController with ShooterMixin {
     double yP = _player.body.getMiddleHeight(pixelHeight);
     double xM = body.getMiddleWidth(pixelWidth);
     double xP = _player.body.getMiddleWidth(pixelWidth);
-    double slope = - (yM - yP) / ((xM - xP).abs());
+    double slope = -(yM - yP) / ((xM - xP).abs());
 
     return slope * PROJECTILE_SPEED;
   }

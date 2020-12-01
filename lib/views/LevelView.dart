@@ -12,7 +12,8 @@ class LevelView {
       List<EnemyController> enemyList,
       BossController boss,
       List<CollectableController> collectableList,
-      double pixelHeight) {
+      double pixelHeight,
+      bool collision) {
     List<Widget> widgetList = new List();
 
     // Platforms
@@ -25,7 +26,7 @@ class LevelView {
       AnimatedContainer(
         alignment: Alignment(player.x, player.y),
         duration: Duration(milliseconds: 0),
-        child: player.displayPlayer(),
+        child: player.displayPlayer(collision),
       ),
     );
 

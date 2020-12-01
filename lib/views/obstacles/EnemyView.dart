@@ -3,13 +3,13 @@ import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
 import 'package:flutter/material.dart';
 
 class EnemyView {
-  Widget displayEnemy(Body body) {
+  Widget displayEnemy(Body body, int type) {
     return Container(
       width: body.width,
       height: body.height,
       child: FittedBox(
         fit: BoxFit.fill,
-        child: Image.asset('images/Monsters/virus3.png'),
+        child: Image.asset('images/Monsters/virus' + type.toString() + '.png'),
       ),
     );
   }

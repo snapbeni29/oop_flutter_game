@@ -9,8 +9,9 @@ class EnemyController {
 
   Stopwatch _frozenTimer = Stopwatch();
 
-  EnemyController(Body body, int maxHealth, Body area) {
-    model = new EnemyModel(body: body, maxHealth: maxHealth, area: area);
+  EnemyController(Body body, int maxHealth, Body area, {int type = 3}) {
+    model = new EnemyModel(
+        body: body, maxHealth: maxHealth, area: area, type: type);
     view = new EnemyView();
   }
 
@@ -47,7 +48,7 @@ class EnemyController {
   bool get dead => model.dead;
 
   Widget displayEnemy() {
-    return view.displayEnemy(model.body);
+    return view.displayEnemy(model.body, model.type);
   }
 
   Widget displayEnemyLife() {

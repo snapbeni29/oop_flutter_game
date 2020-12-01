@@ -13,7 +13,11 @@ class PreGamePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final int levelNumber = ModalRoute.of(context).settings.arguments;
+    List<dynamic> args = ModalRoute.of(context).settings.arguments;
+    final int levelNumber = args[0];
+    final String hat = args[1];
+    final bool doubleJump = args[2];
+    final int projectiles = args[3];
 
     // If the level is not created yet, we display a screen
     if (levelNumber > levelCreated || levelNumber < 1) {
@@ -31,7 +35,9 @@ class PreGamePage extends StatelessWidget {
       providers: [
         ChangeNotifierProvider<LevelController>(
           create: (_) => LevelController(
-              new PlayerController(context), context, levelNumber),
+              new PlayerController(context, hat, doubleJump, projectiles),
+              context,
+              levelNumber),
         ),
       ],
       child: _LoadingPage(),

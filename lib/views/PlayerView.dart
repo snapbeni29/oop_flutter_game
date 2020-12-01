@@ -4,46 +4,72 @@ import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
 import 'package:flutter/material.dart';
 
 class PlayerView {
-  Widget displayPlayer(int playerSprite, Direction vertical,
-      Direction horizontal, double width, double height, bool red, bool blue) {
+  Widget displayPlayer(
+      int playerSprite,
+      Direction vertical,
+      Direction horizontal,
+      double width,
+      double height,
+      bool red,
+      bool blue,
+      bool collision,
+      String hat) {
     // We first have to define the sprite to use depending on its direction
     // (jumping, falling, running left/right) and its state (blue or red potion)
     Image img;
     if (vertical == Direction.UP) {
       if (red) {
-        img = Image.asset('images/Player/JumpRed (5).png');
+        img = Image.asset('images/Player/Jump' + hat + 'Red (5).png');
       } else if (blue) {
-        img = Image.asset('images/Player/JumpBlue (5).png');
+        img = Image.asset('images/Player/Jump' + hat + 'Blue (5).png');
       } else {
-        img = Image.asset('images/Player/Jump (5).png');
+        img = Image.asset('images/Player/Jump' + hat + ' (5).png');
       }
     } else if (vertical == Direction.DOWN) {
       if (red) {
-        img = Image.asset('images/Player/JumpRed (9).png');
+        img = Image.asset('images/Player/Jump' + hat + 'Red (9).png');
       } else if (blue) {
-        img = Image.asset('images/Player/JumpBlue (9).png');
+        img = Image.asset('images/Player/Jump' + hat + 'Blue (9).png');
       } else {
-        img = Image.asset('images/Player/Jump (9).png');
+        img = Image.asset('images/Player/Jump' + hat + ' (9).png');
+      }
+    } else if ((horizontal == Direction.RIGHT ||
+            horizontal == Direction.LEFT) &&
+        collision) {
+      if (red) {
+        img = Image.asset('images/Player/Idle' + hat + 'Red (1).png');
+      } else if (blue) {
+        img = Image.asset('images/Player/Idle' + hat + 'Blue (1).png');
+      } else {
+        img = Image.asset('images/Player/Idle' + hat + ' (1).png');
       }
     } else if (horizontal == Direction.RIGHT || horizontal == Direction.LEFT) {
       if (red) {
-        img = Image.asset(
-            'images/Player/RunRed (' + (playerSprite + 1).toString() + ').png');
+        img = Image.asset('images/Player/Run' +
+            hat +
+            'Red (' +
+            (playerSprite + 1).toString() +
+            ').png');
       } else if (blue) {
-        img = Image.asset('images/Player/RunBlue (' +
+        img = Image.asset('images/Player/Run' +
+            hat +
+            'Blue (' +
             (playerSprite + 1).toString() +
             ').png');
       } else {
-        img = Image.asset(
-            'images/Player/Run (' + (playerSprite + 1).toString() + ').png');
+        img = Image.asset('images/Player/Run' +
+            hat +
+            ' (' +
+            (playerSprite + 1).toString() +
+            ').png');
       }
     } else {
       if (red) {
-        img = Image.asset('images/Player/IdleRed (1).png');
+        img = Image.asset('images/Player/Idle' + hat + 'Red (1).png');
       } else if (blue) {
-        img = Image.asset('images/Player/IdleBlue (1).png');
+        img = Image.asset('images/Player/Idle' + hat + 'Blue (1).png');
       } else {
-        img = Image.asset('images/Player/Idle (1).png');
+        img = Image.asset('images/Player/Idle' + hat + ' (1).png');
       }
     }
 
@@ -99,8 +125,7 @@ class PlayerView {
   }
 
   /// Creates a list of widgets with the projectile.display() function
-  Widget displayProjectiles(
-      List<ProjectileController> projectileList) {
+  Widget displayProjectiles(List<ProjectileController> projectileList) {
     List<Widget> widgetProjectileList = new List();
 
     for (ProjectileController projectile in projectileList) {
