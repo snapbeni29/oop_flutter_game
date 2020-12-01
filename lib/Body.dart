@@ -1,11 +1,12 @@
+import 'package:corona_bot/constants.dart';
+
 /*
   A Body is a useful class that defines a size (width & height) and a position
   (coordinates x & y). Two bodies can collide in a specific direction
   (collideHorizontally & collideVertically), or simply overlap (collide).
+  A set of function are also defined to get the coordinates of some parts
+  of the body (left, right, top, bottom boundary, middle position...).
  */
-
-import 'package:corona_bot/constants.dart';
-
 class Body {
   // Defines the size of the body
   double width, height;
@@ -119,7 +120,7 @@ class Body {
     return x - pixelWidth * width * leftPart;
   }
 
-  getMiddle(double pixelWidth) {
+  double getMiddleWidth(double pixelWidth) {
     double leftPart = 0.5 + x / 2;
     double rightPart = 0.5 - x / 2;
     if (x == 0) {
@@ -128,6 +129,18 @@ class Body {
       return x + pixelWidth * (0.5 - leftPart) * width;
     } else {
       return x - pixelWidth * (0.5 - rightPart) * width;
+    }
+  }
+
+  double getMiddleHeight(double pixelHeight) {
+    double bottomPart = 0.5 - y / 2;
+    double topPart = 0.5 + y / 2;
+    if (y == 0) {
+      return y;
+    } else if (y < 0) {
+      return y + pixelHeight * (0.5 - topPart) * width;
+    } else {
+      return y - pixelHeight * (0.5 - bottomPart) * height;
     }
   }
 }

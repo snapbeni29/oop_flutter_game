@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/controllers/PlayerController.dart';
+import 'package:corona_bot/controllers/obstacles/BossController.dart';
 import 'package:corona_bot/controllers/obstacles/CollectableController.dart';
 import 'package:corona_bot/controllers/obstacles/EnemyController.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
@@ -10,6 +11,14 @@ import 'package:corona_bot/views/LevelView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/* This class contains all the objects in a level:
+    - Player
+    - Platforms
+    - Enemies & Boss
+    - Collectables
+    The player interacts with buttons through the functions shoot, jump and
+    moveRight/moveLeft.
+ */
 class LevelController extends ChangeNotifier {
   LevelModel _model;
   LevelView _view;
@@ -38,6 +47,9 @@ class LevelController extends ChangeNotifier {
   List<PlatformController> _platformList;
   List<EnemyController> _enemyList;
   List<CollectableController> _collectableList;
+  BossController _boss;
+
+  // Constructor ---------------------------------------------------------------
 
   LevelController(
       PlayerController player, BuildContext context, int levelNumber) {
@@ -47,51 +59,58 @@ class LevelController extends ChangeNotifier {
     _levelNumber = levelNumber;
     _player = player;
 
+    // Define pixel width and height
     _pixelWidth = 2.0 / MediaQuery.of(context).size.width;
     _pixelHeight = 2.0 / (MediaQuery.of(context).size.height * 5.0 / 7.0);
 
+    // Get the layout
     Layout layout = new Layout(context, levelNumber: levelNumber);
     _platformList = layout.createPlatforms();
     _enemyList = layout.createEnemies();
     _collectableList = layout.createCollectables();
+    _boss = layout.createBoss(_pixelWidth, _pixelHeight, _player);
+    _boss.enableShooting();
 
-    startMovingEnemies(context);
+    startGameTimer(context);
   }
 
+  // Display -------------------------------------------------------------------
+
+  // Calls the view
   Widget displayLevel() {
-    // Remove the collectables
-    List<CollectableController> toRemove = <CollectableController>[];
-    for (CollectableController collectable in _collectableList) {
-      if (collectable.body.collide(_player.body, _pixelWidth, _pixelHeight)) {
-        if (collectable.type != END_FLAG) {
-          if (collectable.type == COIN) {
-            coins++;
-          } else {
-            _player.drinkPotion(collectable.type);
-          }
-          toRemove.add(collectable);
-        }
-      }
-    }
-    _collectableList.removeWhere((e) => toRemove.contains(e));
-
-    return _view.displayLevel(
-        _player, _platformList, _enemyList, _collectableList, _pixelHeight);
+    return _view.displayLevel(_player, _platformList, _enemyList, _boss,
+        _collectableList, _pixelHeight);
   }
 
-  // Game actions
+  // Game actions --------------------------------------------------------------
 
+  /* Restart all timers by setting the different "pause" booleans to false
+      If fullLife == true,
+        the player used 100 points to buy extra time/life;
+        we reset the game timer and we heal the player back to full life.
+   */
   void restart(bool fullLife) {
     if (fullLife) {
       _model.usePoints(100);
       _model.resetTimer();
       _player.heal(1.0);
     }
+    if (!_boss.dead) {
+      _boss.setPause = false;
+    }
     _model.startTimer();
-    _player.pause = false;
+    _player.setPause = false;
     _pause = false;
   }
 
+  /* These 4 actions pause the game
+      - Pause: The menu is displayed, the player can resume or exit
+      - Game Won: We compute the final score by adding the time and health left,
+                  we show the amount of coins collected and the player can
+                  only return to the main menu.
+      - Time Over & Game Over: The player can use 100 points to buy extra
+                               time/life to continue playing.
+   */
   pause(BuildContext context) {
     alertDialog(context, true, false, "Menu", "Resume");
   }
@@ -115,11 +134,22 @@ class LevelController extends ChangeNotifier {
         "Use 100 points to buy an extra life");
   }
 
+  /* This alertDialog is what pops up when one of the 4 actions above is
+      triggered. We print the title first, then the current score,
+      then 2 buttons:
+        - A button that varies depending on the action triggered
+        - Return to menu
+      Depending on the two booleans buttonGreen and buttonGrey,
+      the button wll be locked or not.
+   */
   alertDialog(BuildContext context, bool buttonGreen, bool buttonGrey,
       String title, String buttonText) {
     _pause = true;
-    _player.pause = true;
+    _player.setPause = true;
     _model.stopTimer();
+    if (!_boss.dead) {
+      _boss.setPause = true;
+    }
     bool finalButtonGreen = buttonGreen || (!buttonGrey && _model.score >= 100);
     return showDialog(
       context: context,
@@ -191,7 +221,7 @@ class LevelController extends ChangeNotifier {
   }
 
   /* Stop all timers.
-    Called when we exit the game.
+    Called when we exit the game through the button "Go to Level Menu".
    */
   void end(BuildContext context) {
     if (_enemyTimer != null) _enemyTimer.cancel();
@@ -200,6 +230,7 @@ class LevelController extends ChangeNotifier {
 
     _model.stopTimer();
     _player.end();
+    _boss.end();
 
     // First pop to get out of the alert dialog
     Navigator.of(context).pop();
@@ -213,20 +244,30 @@ class LevelController extends ChangeNotifier {
 
   // Player actions ------------------------------------------------------------
 
+  // Calls player.shoot(); used by the buttons
   void shoot(_) {
     _player.shoot();
   }
 
+  // Calls player.jump(); used by the buttons
   void jump(double velocity) {
     _player.jump(velocity, _platformList);
   }
 
   // Timer for the entire level ------------------------------------------------
 
-  void startMovingEnemies(BuildContext context) {
+  /* This function is only called once when we create the level.
+      It creates a periodic timer that allows the rebuild of the level
+      every 50ms:
+        - Check if the game is over (player is dead, time is over, game won)
+        - Move the enemies & boss and check collisions to damage the player
+        - Check if the player collects a potion
+        - Remove the dead enemies and the collected potions from their lists
+   */
+  void startGameTimer(BuildContext context) {
     _enemyTimer = Timer.periodic(Duration(milliseconds: 50), (_enemyTimer) {
       if (!_pause) {
-        // The player can only die if there are enemies
+        // The game ends if the player dies
         if (_player.dead) {
           gameOver(context);
         }
@@ -243,6 +284,13 @@ class LevelController extends ChangeNotifier {
           }
         }
 
+        // Boss interactions
+        if (!_boss.dead) {
+          if (_boss.body.collide(_player.body, _pixelWidth, _pixelHeight)) {
+            _player.damage(0.01);
+          }
+          _boss.moveOnce(_pixelWidth);
+        }
         // Enemy interactions
         if (_enemyList.isNotEmpty) {
           List<EnemyController> toRemove = [];
@@ -261,6 +309,22 @@ class LevelController extends ChangeNotifier {
           }
           _enemyList.removeWhere((e) => toRemove.contains(e));
         }
+        // Remove the collectables
+        List<CollectableController> toRemove = <CollectableController>[];
+        for (CollectableController collectable in _collectableList) {
+          if (collectable.body
+              .collide(_player.body, _pixelWidth, _pixelHeight)) {
+            if (collectable.type != END_FLAG) {
+              if (collectable.type == COIN) {
+                coins++;
+              } else {
+                _player.drinkPotion(collectable.type);
+              }
+              toRemove.add(collectable);
+            }
+          }
+        }
+        _collectableList.removeWhere((e) => toRemove.contains(e));
 
         notifyListeners();
       }
@@ -269,7 +333,12 @@ class LevelController extends ChangeNotifier {
 
   // Movement related functions ------------------------------------------------
 
+  /* Creates a timer that lasts as long as the right button is pressed.
+      We update every object in the level.
+      We check collisions with platforms that could interrupt the movement.
+   */
   void moveRight() {
+    // If we are already running left, we stay in this movement.
     if (_player.direction == Direction.LEFT && _midRun) return;
 
     _midRun = true;
@@ -286,7 +355,7 @@ class LevelController extends ChangeNotifier {
                 pt.body, _player.direction, SPEED, _pixelWidth, _pixelHeight)) {
               stopMoveRight();
               _runRightTimer.cancel();
-              notifyListeners();
+              //notifyListeners();
               collision = true;
               break;
             }
@@ -310,18 +379,21 @@ class LevelController extends ChangeNotifier {
             for (CollectableController collectable in _collectableList) {
               collectable.moveRight(_pixelWidth);
             }
+            _boss.moveRight();
             // Update player and projectiles
             _player.moveRight();
-            notifyListeners();
+            //notifyListeners();
           }
         } else {
           _runRightTimer.cancel();
-          notifyListeners();
+          //notifyListeners();
         }
       }
     });
   }
 
+  // When the button is released, we notify the object "player" that it should
+  // stop running.
   void stopMoveRight() {
     if (_player.direction == Direction.RIGHT) {
       _midRun = false;
@@ -329,7 +401,9 @@ class LevelController extends ChangeNotifier {
     }
   }
 
+  // Same as moveRight() but with Left
   void moveLeft() {
+    // If we are already running right, we stay in this movement.
     if (_player.direction == Direction.RIGHT && _midRun) return;
 
     _midRun = true;
@@ -345,7 +419,7 @@ class LevelController extends ChangeNotifier {
                 pt.body, _player.direction, SPEED, _pixelWidth, _pixelHeight)) {
               stopMoveLeft();
               _runLeftTimer.cancel();
-              notifyListeners();
+              //notifyListeners();
               collision = true;
               break;
             }
@@ -365,22 +439,25 @@ class LevelController extends ChangeNotifier {
             for (EnemyController enemy in _enemyList) {
               enemy.moveLeft();
             }
+            _boss.moveLeft();
             // Update collectables
             for (CollectableController collectable in _collectableList) {
               collectable.moveLeft(_pixelWidth);
             }
             // Update player and projectiles
             _player.moveLeft();
-            notifyListeners();
+            //notifyListeners();
           }
         } else {
           _runLeftTimer.cancel();
-          notifyListeners();
+          //notifyListeners();
         }
       }
     });
   }
 
+  // When the button is released, we notify the object "player" that it should
+  // stop running.
   void stopMoveLeft() {
     if (_player.direction == Direction.LEFT) {
       _midRun = false;

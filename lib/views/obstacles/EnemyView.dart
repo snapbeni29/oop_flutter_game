@@ -1,4 +1,5 @@
 import 'package:corona_bot/Body.dart';
+import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
 import 'package:flutter/material.dart';
 
 class EnemyView {
@@ -32,6 +33,22 @@ class EnemyView {
           color: Colors.lightGreen,
         ),
       ),
+    );
+  }
+
+  Widget displayProjectiles(List<ProjectileController> projectileList) {
+    List<Widget> widgetProjectileList = new List();
+
+    for (ProjectileController projectile in projectileList) {
+      widgetProjectileList.add(AnimatedContainer(
+        alignment: Alignment(projectile.body.x, projectile.body.y),
+        duration: Duration(milliseconds: 0),
+        child: projectile.displayProjectile(),
+      ));
+    }
+
+    return Stack(
+      children: widgetProjectileList,
     );
   }
 }

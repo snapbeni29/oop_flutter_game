@@ -1,4 +1,5 @@
 import 'package:corona_bot/controllers/PlayerController.dart';
+import 'package:corona_bot/controllers/obstacles/BossController.dart';
 import 'package:corona_bot/controllers/obstacles/CollectableController.dart';
 import 'package:corona_bot/controllers/obstacles/EnemyController.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
@@ -9,6 +10,7 @@ class LevelView {
       PlayerController player,
       List<PlatformController> platformList,
       List<EnemyController> enemyList,
+      BossController boss,
       List<CollectableController> collectableList,
       double pixelHeight) {
     List<Widget> widgetList = new List();
@@ -37,7 +39,7 @@ class LevelView {
     );
 
     //Projectiles
-    widgetList.add(player.displayProjectile(platformList, enemyList));
+    widgetList.add(player.displayProjectile(platformList, enemyList, boss));
 
     // Enemies
     for (EnemyController enemy in enemyList) {
@@ -59,8 +61,32 @@ class LevelView {
       );
     }
 
+    // Boss
+    if (!boss.dead) {
+      widgetList.add(
+        AnimatedContainer(
+          alignment: Alignment(boss.body.x, boss.body.y),
+          duration: Duration(milliseconds: 0),
+          child: boss.displayEnemy(),
+        ),
+      );
+      // With their health bar
+      widgetList.add(
+        AnimatedContainer(
+          alignment:
+              Alignment(boss.body.x, boss.body.getTopBoundary(pixelHeight)),
+          duration: Duration(milliseconds: 0),
+          child: boss.displayEnemyLife(),
+        ),
+      );
+      // Boss projectiles
+      if (boss.isShooting) {
+        widgetList.add(boss.displayProjectile(platformList, player));
+      }
+    }
+
     // Collectables
-    for(CollectableController collectable in collectableList) {
+    for (CollectableController collectable in collectableList) {
       widgetList.add(collectable.displayCollectable());
     }
 

@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 class PlayerView {
   Widget displayPlayer(int playerSprite, Direction vertical,
       Direction horizontal, double width, double height, bool red, bool blue) {
+    // We first have to define the sprite to use depending on its direction
+    // (jumping, falling, running left/right) and its state (blue or red potion)
     Image img;
     if (vertical == Direction.UP) {
       if (red) {
@@ -73,6 +75,7 @@ class PlayerView {
     }
   }
 
+  // Shows the health bar of the player
   Widget displayLife(double lifeWidth, double life) {
     return Container(
       width: lifeWidth,
@@ -95,6 +98,7 @@ class PlayerView {
     );
   }
 
+  // Creates a list of widgets with the projectile.display() function
   Widget displayProjectiles(
       List<ProjectileController> projectileList) {
     List<Widget> widgetProjectileList = new List();

@@ -1,6 +1,12 @@
 import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/layouts/LayoutBaseBlocs.dart';
 
+/* Layout of level #1
+    Extends LayoutBaseBlocs such that it implements the createLayout() function
+    and uses the different blocs defined there.
+    Doing so, it is easier to see what is done in the level.
+ */
+
 class LayoutLevel1 extends LayoutBaseBlocs {
   LayoutLevel1() {
     createLayout();
@@ -24,6 +30,7 @@ class LayoutLevel1 extends LayoutBaseBlocs {
     wall(5.25, 1, 1.5);
     groundCollectable(5.5, RED_POTION);
     tunnelEnemy(6, 4);
-    groundCollectable(8, END_FLAG);
+    bossEnemy(8);
+    groundCollectable(9, END_FLAG);
   }
 }

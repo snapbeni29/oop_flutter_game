@@ -1,11 +1,6 @@
-/*
-  A layout represents a level.
-  A layout consists in a set of platforms and a set of enemies
-    When a Level is created, it first uses createPlatforms(),
-    then createEnemies(), because enemies can be associated to a platform.
- */
-
 import 'package:corona_bot/constants.dart';
+import 'package:corona_bot/controllers/PlayerController.dart';
+import 'package:corona_bot/controllers/obstacles/BossController.dart';
 import 'package:corona_bot/controllers/obstacles/CollectableController.dart';
 import 'package:corona_bot/controllers/obstacles/EnemyController.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
@@ -15,6 +10,10 @@ import 'package:corona_bot/layouts/levels/LayoutLevel1.dart';
 import 'package:corona_bot/Body.dart';
 import 'package:flutter/material.dart';
 
+/* This class loads a layout based on the levelNumber received as parameter.
+  The level can then use the different functions create...() to retrieve
+  the different obstacles in the level.
+ */
 class Layout {
   List<PlatformController> _platformList = new List();
   List<EnemyController> _enemyList = new List();
@@ -62,26 +61,51 @@ class Layout {
   }
 
   List<EnemyController> createEnemies() {
-    List<BodyConstants> areasBody = _layout.getEnemyAreas;
+    List<BodyConstants> enemiesBody = _layout.getEnemyAreas;
 
-    for (var i = 0; i < areasBody.length; i++) {
-      _enemyList.add(new EnemyController(
+    for (var i = 0; i < enemiesBody.length; i++) {
+      _enemyList.add(
+        new EnemyController(
           new Body(
             width: width / 12.0,
             height: height / 8.0,
-            x: areasBody[i].x,
-            y: areasBody[i].y,
+            x: enemiesBody[i].x,
+            y: enemiesBody[i].y,
           ),
           3,
           new Body(
-            width: width / areasBody[i].w,
-            height: height / areasBody[i].h,
-            x: areasBody[i].x,
-            y: areasBody[i].y,
-          )));
+            width: width / enemiesBody[i].w,
+            height: height / enemiesBody[i].h,
+            x: enemiesBody[i].x,
+            y: enemiesBody[i].y,
+          ),
+        ),
+      );
     }
 
     return _enemyList;
+  }
+
+  BossController createBoss(double pw, double ph, PlayerController player) {
+    BodyConstants bossLevel = _layout.getBossEnemy;
+
+    return BossController(
+      pw,
+      ph,
+      Body(
+        width: width / bossWidth,
+        height: height / bossHeight,
+        x: bossLevel.x,
+        y: bossLevel.y,
+      ),
+      Body(
+        width: width / bossLevel.w,
+        height: height / bossLevel.h,
+        x: bossLevel.x,
+        y: bossLevel.y,
+      ),
+      player,
+    );
   }
 
   List<CollectableController> createCollectables() {
@@ -92,7 +116,7 @@ class Layout {
           ? 1 // full screen
           : collectablesBody[i].h; // normal size
       double widthDivisor = collectablesBody[i].collectable == END_FLAG
-          ?  80 // narrower
+          ? 80 // narrower
           : collectablesBody[i].w; // normal size
 
       _collectableList.add(new CollectableController(

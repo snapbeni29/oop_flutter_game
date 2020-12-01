@@ -5,13 +5,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 /*
   The home page consists in a list of levels to play.
   Each level button is represented by a widget _LevelWidget.
-    Such a widget is a box that contains the number of the level
-    and a button to start this level.
+    Such a widget is a box that contains the number of the level,
+    the highest score on this level and a button to start this level.
     When one presses the button, the page PreGamePage starts
     (route '/game'). The number of the level is an argument that
     can be used in PreGamePage.
  */
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -27,7 +26,8 @@ class _HomePageState extends State<HomePage> {
     getData();
   }
 
-  getData() async {
+  // Load the data in the variables "coins" and "scoreLevel"
+  void getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       coins = prefs.getInt('coins') ?? 0;
@@ -35,37 +35,25 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  displayCoins() {
-    return Padding(
-      padding: const EdgeInsets.only(right: 100.0),
-      child: Text(
-        "$coins",
-        style: TextStyle(
-          fontFamily: "Cs",
-          fontSize: 20.0,
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // AppBar ----------------------------------------------------------------
       appBar: AppBar(
         centerTitle: true,
         title: Text(
           "CoronaBot",
           style: TextStyle(fontFamily: "Cs"),
         ),
+        // Shop button on the left ---------------------------------------------
         leading: IconButton(
           tooltip: "Shop",
-          icon: Image.asset(
-            'images/Background/shop.png',
-          ),
+          icon: Image.asset('images/Background/shop.png'),
           onPressed: () {
             Navigator.of(context).pushNamed('/shop');
           },
         ),
+        // Show coins on the right ---------------------------------------------
         actions: <Widget>[
           Center(
             child: Padding(
@@ -75,10 +63,20 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Center(
-            child: displayCoins(),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 100.0),
+              child: Text(
+                "$coins",
+                style: TextStyle(
+                  fontFamily: "Cs",
+                  fontSize: 20.0,
+                ),
+              ),
+            ),
           ),
         ],
       ),
+      // Body ------------------------------------------------------------------
       body: Container(
         decoration: new BoxDecoration(
           image: new DecorationImage(
@@ -151,6 +149,7 @@ class _LevelWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
+          // Number of the level
           Text(
             'Level ' + (levelNumber + 1).toString(),
             textAlign: TextAlign.center,
@@ -158,6 +157,7 @@ class _LevelWidget extends StatelessWidget {
               fontSize: 20.0,
             ),
           ),
+          // Highest score if it exists
           score == null
               ? SizedBox()
               : Text(
@@ -167,6 +167,8 @@ class _LevelWidget extends StatelessWidget {
                     fontSize: 20.0,
                   ),
                 ),
+          // Button to start the level
+          // Can be locked or not
           RaisedButton(
             onPressed: () {
               if (!locked) {

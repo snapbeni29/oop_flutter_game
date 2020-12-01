@@ -15,6 +15,7 @@ const Color BUTTON_PRESSED = Colors.white;
 // Level constants
 const int NB_LEVELS = 5;
 const double TIME_LEVEL = 200.5; // in seconds
+const int BOSS_HEALTH = 20;
 
 // Collectable types
 const String BLUE_POTION = "bluePot"; // freezing potion during potion 10s

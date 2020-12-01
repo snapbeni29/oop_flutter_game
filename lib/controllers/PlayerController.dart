@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:corona_bot/constants.dart';
+import 'package:corona_bot/controllers/ShooterMixin.dart';
+import 'package:corona_bot/controllers/obstacles/BossController.dart';
 import 'package:corona_bot/controllers/obstacles/EnemyController.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
 import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
@@ -8,22 +10,18 @@ import 'package:corona_bot/models/PlayerModel.dart';
 import 'package:corona_bot/views/PlayerView.dart';
 import 'package:flutter/material.dart';
 
-class PlayerController extends ChangeNotifier {
+class PlayerController extends ChangeNotifier with ShooterMixin {
   PlayerModel _model;
   PlayerView _view;
 
   Body _body;
+  double _lifeWidth;
+  bool _pause = false;
 
   // Variables to deal with gravity
   double _time = 0.0;
   double _height = 0.0;
   double _initialHeight;
-
-  // Variables used for the projectiles
-  List<ProjectileController> _projectileList = List();
-  int _aliveProjectile = 0;
-  int _maxProjectile = 3;
-  bool _firstShoot = false;
 
   // Timers
   Timer _projectilesTimer;
@@ -32,16 +30,9 @@ class PlayerController extends ChangeNotifier {
   Stopwatch _redPotTimer = Stopwatch();
   Stopwatch _bluePotTimer = Stopwatch();
 
-  bool _pause = false;
-
-  // Constants
-  double _pixelWidth;
-  double _pixelHeight;
-  double _lifeWidth;
-
   PlayerController(BuildContext context) {
-    _pixelWidth = 2.0 / MediaQuery.of(context).size.width;
-    _pixelHeight = 2.0 / (MediaQuery.of(context).size.height * 5.0 / 7.0);
+    pixelWidth = 2.0 / MediaQuery.of(context).size.width;
+    pixelHeight = 2.0 / (MediaQuery.of(context).size.height * 5.0 / 7.0);
     _lifeWidth = MediaQuery.of(context).size.width / 3.0;
 
     _model = new PlayerModel();
@@ -66,20 +57,20 @@ class PlayerController extends ChangeNotifier {
     if (_fallTimer != null) _fallTimer.cancel();
   }
 
-  set pause(bool value) => _pause = value;
+  set setPause(bool value) => _pause = value;
 
   // Movement related functions ------------------------------------------------
 
   void moveRight() {
     _model.moveRight();
-    for (ProjectileController projectile in _projectileList) {
+    for (ProjectileController projectile in projectileList) {
       projectile.moveRight();
     }
   }
 
   void moveLeft() {
     _model.moveLeft();
-    for (ProjectileController projectile in _projectileList) {
+    for (ProjectileController projectile in projectileList) {
       projectile.moveLeft();
     }
   }
@@ -119,7 +110,7 @@ class PlayerController extends ChangeNotifier {
           // Bump into a platform while jumping up
           if (_model.vertical == Direction.UP &&
               _body.collideVertically(
-                  pt.body, _model.vertical, speed, _pixelWidth, _pixelHeight)) {
+                  pt.body, _model.vertical, speed, pixelWidth, pixelHeight)) {
             collision = true;
             _model.jump = Direction.STILL;
             _height = 0.0;
@@ -130,10 +121,10 @@ class PlayerController extends ChangeNotifier {
           // Land onto a platform
           else if (_model.vertical == Direction.DOWN &&
               _body.collideVertically(
-                  pt.body, _model.vertical, speed, _pixelWidth, _pixelHeight)) {
-            _body.y = (pt.body.getTopBoundary(_pixelHeight) -
-                    _body.height * _pixelHeight / 2.0) /
-                (1 - _pixelHeight * _body.height / 2.0);
+                  pt.body, _model.vertical, speed, pixelWidth, pixelHeight)) {
+            _body.y = (pt.body.getTopBoundary(pixelHeight) -
+                    _body.height * pixelHeight / 2.0) /
+                (1 - pixelHeight * _body.height / 2.0);
             collision = true;
             _height = 0.0;
             _model.jump = Direction.STILL;
@@ -153,7 +144,7 @@ class PlayerController extends ChangeNotifier {
             _body.y = _initialHeight - _height;
         }
 
-        notifyListeners();
+        //notifyListeners();
       }
     });
   }
@@ -162,27 +153,28 @@ class PlayerController extends ChangeNotifier {
     jump(0.0, platformList);
   }
 
+  // Checks if the player is falling from a platform, to start fall().
   bool isFallingOfPlatform(PlatformController pt) {
     if (_model.horizontal == Direction.RIGHT) {
       // If left part of player is no more on the platform => fall
-      if (pt.body.getRightBoundary(_pixelWidth) + SPEED >
-              _body.getLeftBoundary(_pixelWidth) &&
-          pt.body.getRightBoundary(_pixelWidth) <
-              _body.getLeftBoundary(_pixelWidth) &&
+      if (pt.body.getRightBoundary(pixelWidth) + SPEED >
+              _body.getLeftBoundary(pixelWidth) &&
+          pt.body.getRightBoundary(pixelWidth) <
+              _body.getLeftBoundary(pixelWidth) &&
           // Here we check that the player is on the platform
-          pt.body.getTopBoundary(_pixelHeight) >
-              _body.getBottomBoundary(_pixelHeight) - 0.05) {
+          pt.body.getTopBoundary(pixelHeight) >
+              _body.getBottomBoundary(pixelHeight) - 0.05) {
         return true;
       }
     } else {
       // If right part of player is no more on the platform => fall
-      if (pt.body.getLeftBoundary(_pixelWidth) - SPEED <
-              _body.getRightBoundary(_pixelWidth) &&
-          pt.body.getLeftBoundary(_pixelWidth) >
-              _body.getRightBoundary(_pixelWidth) &&
+      if (pt.body.getLeftBoundary(pixelWidth) - SPEED <
+              _body.getRightBoundary(pixelWidth) &&
+          pt.body.getLeftBoundary(pixelWidth) >
+              _body.getRightBoundary(pixelWidth) &&
           // Here we check that the player is on the platform
-          pt.body.getTopBoundary(_pixelHeight) >
-              _body.getBottomBoundary(_pixelHeight) - 0.05) {
+          pt.body.getTopBoundary(pixelHeight) >
+              _body.getBottomBoundary(pixelHeight) - 0.05) {
         return true;
       }
     }
@@ -194,25 +186,18 @@ class PlayerController extends ChangeNotifier {
   // Shoot related functions ---------------------------------------------------
 
   void shoot() {
-    // Shoot if there is not already _maxProjectile
-    if (_aliveProjectile < _maxProjectile) {
-      if (!_firstShoot) {
-        _firstShoot = true;
-        startProjectile(); // start timer
-      }
-      _projectileList.add(new ProjectileController(
-          new Body(
-            x: _body.x,
-            y: (_body.getBottomBoundary(_pixelHeight) +
-                    _body.getTopBoundary(_pixelHeight)) /
-                2,
-            width: _body.width / 3.0,
-            height: _body.height / 3.0,
-          ),
-          _model.horizontal,
-          _bluePotTimer.isRunning));
-      _aliveProjectile++;
-    }
+    shootMixin(
+      _model.horizontal,
+      _bluePotTimer.isRunning,
+      new Body(
+        x: _body.x,
+        y: (_body.getBottomBoundary(pixelHeight) +
+                _body.getTopBoundary(pixelHeight)) /
+            2,
+        width: _body.width / 3.0,
+        height: _body.height / 3.0,
+      ),
+    );
   }
 
   void startProjectile() {
@@ -220,71 +205,56 @@ class PlayerController extends ChangeNotifier {
         Timer.periodic(Duration(milliseconds: 50), (_projectilesTimer) {
       if (!_pause) {
         // Stop the timer to save power
-        if (_projectileList.isEmpty) {
-          _firstShoot = false;
+        if (projectileList.isEmpty) {
+          firstShoot = false;
           _projectilesTimer.cancel();
         }
-        for (ProjectileController projectile in _projectileList) {
+        for (ProjectileController projectile in projectileList) {
           projectile.travel();
         }
-        notifyListeners();
+        //notifyListeners();
       }
     });
   }
 
-  Widget displayProjectile(
-      List<PlatformController> platformList, List<EnemyController> enemyList) {
-    removeCollideProjectiles(platformList, enemyList);
-    return _view.displayProjectiles(_projectileList);
+  Widget displayProjectile(List<PlatformController> platformList,
+      List<EnemyController> enemyList, BossController boss) {
+    removeCollideProjectiles(platformList, enemyList, boss);
+    return _view.displayProjectiles(projectileList);
   }
 
-  void removeCollideProjectiles(
-      List<PlatformController> platformList, List<EnemyController> enemyList) {
+  void removeCollideProjectiles(List<PlatformController> platformList,
+      List<EnemyController> enemyList, BossController boss) {
+    // Check collisions with platforms + out of screen
+    removeCollideProjectilesPlatforms(platformList); // from ShooterMixin
+    // Check collisions with enemies
     List<ProjectileController> toRemove = [];
-    for (ProjectileController projectile in _projectileList) {
-      bool collide = false;
-
-      // Collide with a platform
-      for (PlatformController pt in platformList) {
-        if (projectile.body.collide(pt.body, _pixelWidth, _pixelHeight)) {
-          collide = true;
-          _aliveProjectile--;
+    for (ProjectileController projectile in projectileList) {
+      // Collide with an enemy
+      for (EnemyController enemy in enemyList) {
+        if (projectile.body.collide(enemy.body, pixelWidth, pixelHeight)) {
+          aliveProjectile--;
           toRemove.add(projectile);
+          enemy.damage(projectile.freezing);
           break;
         }
       }
-
-      if (!collide) {
-        // Collide with an enemy
-        for (EnemyController enemy in enemyList) {
-          if (projectile.body.collide(enemy.body, _pixelWidth, _pixelHeight)) {
-            collide = true;
-            _aliveProjectile--;
-            toRemove.add(projectile);
-            enemy.damage(projectile.freezing);
-            break;
+      // Collide with the boss
+      if(!boss.dead) {
+        if (projectile.body.collide(boss.body, pixelWidth, pixelHeight)) {
+          aliveProjectile--;
+          toRemove.add(projectile);
+          boss.damage(projectile.freezing);
+          if (boss.dead) {
+            boss.end();
           }
         }
       }
-
-      if (!collide) {
-        bool outOfScreen = ((projectile.direction == Direction.STILL_RIGHT ||
-                    projectile.direction == Direction.RIGHT) &&
-                projectile.body.x > 1.1) ||
-            ((projectile.direction == Direction.STILL_LEFT ||
-                    projectile.direction == Direction.LEFT) &&
-                projectile.body.x < -1.1);
-
-        if (outOfScreen) {
-          _aliveProjectile--;
-          toRemove.add(projectile);
-        }
-      }
     }
-    _projectileList.removeWhere((e) => toRemove.contains(e));
+    projectileList.removeWhere((e) => toRemove.contains(e));
   }
 
-  // Bonuses
+  // Bonuses -------------------------------------------------------------------
 
   void drinkPotion(String potion) {
     if (potion == GREEN_POTION) {
@@ -300,14 +270,14 @@ class PlayerController extends ChangeNotifier {
         if (_redPotTimer.isRunning) {
           _redPotTimer.reset();
           _redPotTimer.stop();
-          _maxProjectile = 3;
+          maxProjectile = 3;
         }
         if (_bluePotTimer.isRunning) {
           _bluePotTimer.reset();
         }
-
         _bluePotTimer.start();
         break;
+
       case RED_POTION:
         if (_bluePotTimer.isRunning) {
           _bluePotTimer.reset();
@@ -316,14 +286,15 @@ class PlayerController extends ChangeNotifier {
         if (_redPotTimer.isRunning) {
           _redPotTimer.reset();
         }
-
         _redPotTimer.start();
-        _maxProjectile = 20;
+        maxProjectile = 20;
+        break;
+
+      default:
+        print("Wrong potion type: " + potion);
         break;
     }
   }
-
-  // Accessors -----------------------------------------------------------------
 
   void damage(double dmg) {
     _model.damage(dmg);
@@ -332,6 +303,8 @@ class PlayerController extends ChangeNotifier {
   void heal(double life) {
     _model.heal(life);
   }
+
+  // Accessors -----------------------------------------------------------------
 
   double get health => _model.life;
 
@@ -347,7 +320,7 @@ class PlayerController extends ChangeNotifier {
     if (_redPotTimer.elapsedMilliseconds > 5000) {
       _redPotTimer.reset();
       _redPotTimer.stop();
-      _maxProjectile = 3;
+      maxProjectile = 3;
     }
     if (_bluePotTimer.elapsedMilliseconds > 10000) {
       _bluePotTimer.reset();

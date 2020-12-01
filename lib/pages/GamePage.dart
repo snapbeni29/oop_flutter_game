@@ -11,7 +11,6 @@ import 'package:corona_bot/buttons/ButtonRun.dart';
     Some space for the level + a pause button (top)
     Some space for the buttons (bottom)
  */
-
 class GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -38,7 +37,7 @@ class GamePage extends StatelessWidget {
                         return Stack(
                           children: [
                             level.displayLevel(),
-                            // Pause button
+                            // Pause button ------------------------------------
                             Container(
                               alignment: Alignment(-0.9, -0.8),
                               child: ButtonInstant(
@@ -46,8 +45,7 @@ class GamePage extends StatelessWidget {
                                 start: level.pause,
                               ),
                             ),
-                            // Show time, score and coins
-                            // TODO: in LevelView ?
+                            // Show time, score and coins ----------------------
                             Container(
                               alignment: Alignment(0.7, -0.9),
                               child: Padding(

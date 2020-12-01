@@ -5,7 +5,8 @@ import 'package:corona_bot/pages/GamePage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// Class useful for declaring the provider
+// Intermediary class useful for declaring the provider
+// and retrieving the number of the level to play
 class PreGamePage extends StatelessWidget {
   final levelCreated = 1;
 
@@ -13,9 +14,7 @@ class PreGamePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final int levelNumber = ModalRoute.of(context).settings.arguments;
 
-    print(levelNumber);
-
-
+    // If the level is not created yet, we display a screen
     if(levelNumber > levelCreated || levelNumber < 1){
       return Container(
         child: RaisedButton(
@@ -26,6 +25,7 @@ class PreGamePage extends StatelessWidget {
       );
     }
 
+    // otherwise,  start the game on the GamePage
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<LevelController>(

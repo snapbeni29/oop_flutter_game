@@ -8,12 +8,14 @@ class ProjectileController {
   ProjectileModel _model;
   ProjectileView _view;
 
-  ProjectileController(Body body, Direction direction, bool blue){
-    _model = new ProjectileModel(body: body, direction: direction, blue: blue);
+  ProjectileController(
+      Body body, Direction direction, bool blue, double yAngle) {
+    _model = new ProjectileModel(
+        body: body, direction: direction, blue: blue, yAngle: yAngle);
     _view = new ProjectileView();
   }
 
-  void travel(){
+  void travel() {
     _model.travel();
   }
 

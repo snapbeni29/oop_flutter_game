@@ -15,14 +15,15 @@ class _ShopPageState extends State<ShopPage> {
     getData();
   }
 
-  getData() async {
+  // Load the number of coins in the "coins" variable
+  void getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       coins = prefs.getInt('coins') ?? 0;
     });
   }
 
-  displayCoins() {
+  Widget displayCoins() {
     return Padding(
       padding: const EdgeInsets.only(right: 100.0),
       child: Text(
