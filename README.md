@@ -1,12 +1,11 @@
 # CoronaBot
 
-3200 total lines (comments added)
-2500 lines of code
+3661 total lines (comments added)
+2942 lines of code
 
 ## What's new ?
 
 - Shop implemented
-=> Be able to buy abilities
 
 - Boss end-level
 => Add the random part from Benoit
