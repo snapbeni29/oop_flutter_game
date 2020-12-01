@@ -2,15 +2,14 @@ import 'package:corona_bot/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/*
-  The home page consists in a list of levels to play.
-  Each level button is represented by a widget _LevelWidget.
-    Such a widget is a box that contains the number of the level,
-    the highest score on this level and a button to start this level.
-    When one presses the button, the page PreGamePage starts
-    (route '/game'). The number of the level is an argument that
-    can be used in PreGamePage.
- */
+///  The home page consists in a list of levels to play.
+///  Each level button is represented by a widget _LevelWidget.
+///    Such a widget is a box that contains the number of the level,
+///    the highest score on this level and a button to start this level.
+///    When one presses the button, the page PreGamePage starts
+///   (route '/game'). The number of the level is an argument that
+///   can be used in PreGamePage.
+///
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -26,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     getData();
   }
 
-  // Load the data in the variables "coins" and "scoreLevel"
+  /// Load the data in the variables "coins" and "scoreLevel"
   void getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {

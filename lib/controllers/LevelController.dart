@@ -11,14 +11,14 @@ import 'package:corona_bot/views/LevelView.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/* This class contains all the objects in a level:
-    - Player
-    - Platforms
-    - Enemies & Boss
-    - Collectables
-    The player interacts with buttons through the functions shoot, jump and
-    moveRight/moveLeft.
- */
+/// This class contains all the objects in a level:
+///    - Player
+///    - Platforms
+///    - Enemies & Boss
+///    - Collectables
+///    The player interacts with buttons through the functions shoot, jump and
+///    moveRight/moveLeft.
+///
 class LevelController extends ChangeNotifier {
   LevelModel _model;
   LevelView _view;
@@ -76,7 +76,7 @@ class LevelController extends ChangeNotifier {
 
   // Display -------------------------------------------------------------------
 
-  // Calls the view
+  /// Calls the view
   Widget displayLevel() {
     return _view.displayLevel(_player, _platformList, _enemyList, _boss,
         _collectableList, _pixelHeight);
@@ -84,11 +84,11 @@ class LevelController extends ChangeNotifier {
 
   // Game actions --------------------------------------------------------------
 
-  /* Restart all timers by setting the different "pause" booleans to false
-      If fullLife == true,
-        the player used 100 points to buy extra time/life;
-        we reset the game timer and we heal the player back to full life.
-   */
+  /// Restart all timers by setting the different "pause" booleans to false
+  ///    If fullLife == true,
+  ///      the player used 100 points to buy extra time/life;
+  ///      we reset the game timer and we heal the player back to full life.
+  ///
   void restart(bool fullLife) {
     if (fullLife) {
       _model.usePoints(100);
@@ -103,14 +103,14 @@ class LevelController extends ChangeNotifier {
     _pause = false;
   }
 
-  /* These 4 actions pause the game
-      - Pause: The menu is displayed, the player can resume or exit
-      - Game Won: We compute the final score by adding the time and health left,
-                  we show the amount of coins collected and the player can
-                  only return to the main menu.
-      - Time Over & Game Over: The player can use 100 points to buy extra
-                               time/life to continue playing.
-   */
+  /// These 4 actions pause the game
+  ///    - Pause: The menu is displayed, the player can resume or exit
+  ///    - Game Won: We compute the final score by adding the time and health left,
+  ///                we show the amount of coins collected and the player can
+  ///                only return to the main menu.
+  ///    - Time Over & Game Over: The player can use 100 points to buy extra
+  ///                             time/life to continue playing.
+  ///
   pause(BuildContext context) {
     alertDialog(context, true, false, "Menu", "Resume");
   }
@@ -134,14 +134,15 @@ class LevelController extends ChangeNotifier {
         "Use 100 points to buy an extra life");
   }
 
-  /* This alertDialog is what pops up when one of the 4 actions above is
-      triggered. We print the title first, then the current score,
-      then 2 buttons:
-        - A button that varies depending on the action triggered
-        - Return to menu
-      Depending on the two booleans buttonGreen and buttonGrey,
-      the button wll be locked or not.
-   */
+  /// This alertDialog is what pops up when one of the 4 actions above is
+  /// triggered.
+  ///    We print the title first, then the current score,
+  ///    then 2 buttons:
+  ///      - A button that varies depending on the action triggered
+  ///      - Return to menu
+  ///   Depending on the two booleans buttonGreen and buttonGrey,
+  ///    the button wll be locked or not.
+  ///
   alertDialog(BuildContext context, bool buttonGreen, bool buttonGrey,
       String title, String buttonText) {
     _pause = true;
@@ -220,9 +221,9 @@ class LevelController extends ChangeNotifier {
     );
   }
 
-  /* Stop all timers.
-    Called when we exit the game through the button "Go to Level Menu".
-   */
+  /// Stop all timers.
+  ///  Called when we exit the game through the button "Go to Level Menu".
+  ///
   void end(BuildContext context) {
     if (_enemyTimer != null) _enemyTimer.cancel();
     if (_runRightTimer != null) _runRightTimer.cancel();
@@ -244,26 +245,26 @@ class LevelController extends ChangeNotifier {
 
   // Player actions ------------------------------------------------------------
 
-  // Calls player.shoot(); used by the buttons
+  /// Calls player.shoot(); used by the buttons
   void shoot(_) {
     _player.shoot();
   }
 
-  // Calls player.jump(); used by the buttons
+  /// Calls player.jump(); used by the buttons
   void jump(double velocity) {
     _player.jump(velocity, _platformList);
   }
 
   // Timer for the entire level ------------------------------------------------
 
-  /* This function is only called once when we create the level.
-      It creates a periodic timer that allows the rebuild of the level
-      every 50ms:
-        - Check if the game is over (player is dead, time is over, game won)
-        - Move the enemies & boss and check collisions to damage the player
-        - Check if the player collects a potion
-        - Remove the dead enemies and the collected potions from their lists
-   */
+  /// This function is only called once when we create the level.
+  ///    It creates a periodic timer that allows the rebuild of the level
+  ///    every 50ms:
+  ///      - Check if the game is over (player is dead, time is over, game won)
+  ///      - Move the enemies & boss and check collisions to damage the player
+  ///      - Check if the player collects a potion
+  ///      - Remove the dead enemies and the collected potions from their lists
+  ///
   void startGameTimer(BuildContext context) {
     _enemyTimer = Timer.periodic(Duration(milliseconds: 50), (_enemyTimer) {
       if (!_pause) {
@@ -333,10 +334,10 @@ class LevelController extends ChangeNotifier {
 
   // Movement related functions ------------------------------------------------
 
-  /* Creates a timer that lasts as long as the right button is pressed.
-      We update every object in the level.
-      We check collisions with platforms that could interrupt the movement.
-   */
+  /// Creates a timer that lasts as long as the right button is pressed.
+  ///    We update every object in the level.
+  ///    We check collisions with platforms that could interrupt the movement.
+  ///
   void moveRight() {
     // If we are already running left, we stay in this movement.
     if (_player.direction == Direction.LEFT && _midRun) return;
@@ -392,8 +393,8 @@ class LevelController extends ChangeNotifier {
     });
   }
 
-  // When the button is released, we notify the object "player" that it should
-  // stop running.
+  /// When the button is released, we notify the object "player" that it should
+  /// stop running.
   void stopMoveRight() {
     if (_player.direction == Direction.RIGHT) {
       _midRun = false;
@@ -401,7 +402,7 @@ class LevelController extends ChangeNotifier {
     }
   }
 
-  // Same as moveRight() but with Left
+  /// Same as moveRight() but with Left
   void moveLeft() {
     // If we are already running right, we stay in this movement.
     if (_player.direction == Direction.RIGHT && _midRun) return;
@@ -456,8 +457,8 @@ class LevelController extends ChangeNotifier {
     });
   }
 
-  // When the button is released, we notify the object "player" that it should
-  // stop running.
+  /// When the button is released, we notify the object "player" that it should
+  /// stop running.
   void stopMoveLeft() {
     if (_player.direction == Direction.LEFT) {
       _midRun = false;

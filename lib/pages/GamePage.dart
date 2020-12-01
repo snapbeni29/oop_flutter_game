@@ -6,11 +6,10 @@ import 'package:corona_bot/buttons/ButtonInstant.dart';
 import 'package:corona_bot/buttons/ButtonJump.dart';
 import 'package:corona_bot/buttons/ButtonRun.dart';
 
-/*
-  The game page is divided into two parts:
-    Some space for the level + a pause button (top)
-    Some space for the buttons (bottom)
- */
+///  The game page is divided into two parts:
+///    Some space for the level + a pause button (top)
+///    Some space for the buttons (bottom)
+///
 class GamePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

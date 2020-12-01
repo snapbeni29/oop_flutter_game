@@ -15,10 +15,9 @@ class ButtonInstant extends StatefulWidget{
 }
 
 class _ButtonInstantState extends State<ButtonInstant> {
-  /*
-    A simple button:
-      As soon as we touch it (onTapDown), it starts its application
-   */
+  ///  A simple button:
+  ///    As soon as we touch it (onTapDown), it starts its application
+  ///
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (details) => widget.start(context),

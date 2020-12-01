@@ -75,7 +75,7 @@ class PlayerView {
     }
   }
 
-  // Shows the health bar of the player
+  /// Shows the health bar of the player
   Widget displayLife(double lifeWidth, double life) {
     return Container(
       width: lifeWidth,
@@ -98,7 +98,7 @@ class PlayerView {
     );
   }
 
-  // Creates a list of widgets with the projectile.display() function
+  /// Creates a list of widgets with the projectile.display() function
   Widget displayProjectiles(
       List<ProjectileController> projectileList) {
     List<Widget> widgetProjectileList = new List();

@@ -3,7 +3,7 @@ import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
 import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
 
-// Implements some shoot related functions and some functions to override.
+/// Implements some shoot related functions and some functions to override.
 abstract class ShooterMixin {
   // Variables used for the projectiles
   List<ProjectileController> projectileList = List();
@@ -15,13 +15,13 @@ abstract class ShooterMixin {
   double pixelWidth;
   double pixelHeight;
 
-  // As startProjectile() will implement a timer, it needs an end() to stop it.
+  /// As startProjectile() will implement a timer, it needs an end() to stop it.
   void end();
 
-  /* If this is the firstShoot (firstShoot = false as it has not been done yet),
-   we start the timer with the startProjectile function to override.
-   Else, we add a new projectile to the list if possible.
-   */
+  /// If this is the firstShoot (firstShoot = false as it has not been done
+  /// yet), we start the timer with the startProjectile function to override.
+  /// Else, we add a new projectile to the list if possible.
+  ///
   void shootMixin(Direction direction, bool freezing, Body projectileBody,
       {double yAngle = 0}) {
     // Shoot if there is not already _maxProjectile
@@ -38,8 +38,8 @@ abstract class ShooterMixin {
 
   void startProjectile();
 
-  // Remove the projectiles that collide with a platform, or that get out of
-  // the screen.
+  /// Remove the projectiles that collide with a platform, or that get out of
+  /// the screen.
   void removeCollideProjectilesPlatforms(
       List<PlatformController> platformList) {
     List<ProjectileController> toRemove = <ProjectileController>[];
@@ -47,7 +47,6 @@ abstract class ShooterMixin {
       bool collide = false;
       // Collide with a platform
       for (PlatformController pt in platformList) {
-        print(pixelWidth);
         if (projectile.body.collide(pt.body, pixelWidth, pixelHeight)) {
           collide = true;
           aliveProjectile--;

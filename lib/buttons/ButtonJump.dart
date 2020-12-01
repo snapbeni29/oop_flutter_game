@@ -15,13 +15,13 @@ class ButtonJump extends StatefulWidget {
 }
 
 class _ButtonJumpState extends State<ButtonJump> {
-  /* The height of the jump will vary with the intensity of the tap:
-      If one taps quickly, it will not jump high;
-      If one taps for a certain time (0.3s e.g.), it will jump higher.
-   */
   final double _minVelocity = 3.5;
   final Stopwatch sw = new Stopwatch();
 
+  /// The height of the jump will vary with the intensity of the tap:
+  ///  If one taps quickly, it will not jump high;
+  ///  If one taps for a certain time (0.3s e.g.), it will jump higher.
+  ///
   Widget build(BuildContext context) {
     return GestureDetector(
       // The clock starts as soon as one touches the button

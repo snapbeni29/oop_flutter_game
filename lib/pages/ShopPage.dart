@@ -15,7 +15,7 @@ class _ShopPageState extends State<ShopPage> {
     getData();
   }
 
-  // Load the number of coins in the "coins" variable
+  /// Load the number of coins in the "coins" variable
   void getData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {

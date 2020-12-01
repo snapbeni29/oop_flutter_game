@@ -12,7 +12,7 @@ class EnemyModel extends ObstacleModel {
       : _health = maxHealth,
         super(body: body);
 
-  // An enemy moves on its assigned platform
+  /// An enemy moves on its assigned platform
   void moveOnce(double pW) {
     if ((_speed > 0 &&
             body.getRightBoundary(pW) > area.getRightBoundary(pW)) ||

@@ -1,12 +1,12 @@
 import 'package:corona_bot/constants.dart';
 
-/*
-  A Body is a useful class that defines a size (width & height) and a position
-  (coordinates x & y). Two bodies can collide in a specific direction
-  (collideHorizontally & collideVertically), or simply overlap (collide).
-  A set of function are also defined to get the coordinates of some parts
-  of the body (left, right, top, bottom boundary, middle position...).
- */
+///
+///  A Body is a useful class that defines a size (width & height) and a position
+///  (coordinates x & y). Two bodies can collide in a specific direction
+///  (collideHorizontally & collideVertically), or simply overlap (collide).
+///  A set of function are also defined to get the coordinates of some parts
+///  of the body (left, right, top, bottom boundary, middle position...).
+///
 class Body {
   // Defines the size of the body
   double width, height;
@@ -16,7 +16,7 @@ class Body {
 
   Body({this.width, this.height, this.x, this.y});
 
-  // Return true if both bodies overlap
+  /// Return true if both bodies overlap
   bool collide(Body other, double pixelWidth, double pixelHeight) {
     if (this.getRightBoundary(pixelWidth) < other.getLeftBoundary(pixelWidth) ||
         this.getLeftBoundary(pixelWidth) > other.getRightBoundary(pixelWidth) ||
@@ -28,10 +28,9 @@ class Body {
     return true;
   }
 
-  /*
-    'this' goes in 'direction'
-    return true if this collides with other horizontally
-   */
+  ///  'this' goes in 'direction'
+  ///  return true if this collides with other horizontally
+  ///
   bool collideHorizontally(
       Body other, Direction direction, double speed, double pW, double pH) {
     if (direction == Direction.RIGHT) {
@@ -62,10 +61,9 @@ class Body {
     return false;
   }
 
-  /*
-    this goes in direction
-    return true if this collides with other vertically
-   */
+  /// this goes in direction
+  /// return true if this collides with other vertically
+  ///
   bool collideVertically(
       Body other, Direction direction, double speed, double pW, double pH) {
     if (direction == Direction.UP) {
@@ -94,11 +92,11 @@ class Body {
     return false;
   }
 
-  /*
-  Helper functions
-  -> dynamically gets the boundaries of a body on the screen,
-     based on a coordinate and a length
- */
+  /* ---------------------------------------------------------------------- */
+  /* Helper functions ----------------------------------------------------- */
+  /* -> dynamically gets the boundaries of a body on the screen, ---------- */
+  /*    based on a coordinate and a length -------------------------------- */
+  /* ---------------------------------------------------------------------- */
 
   double getBottomBoundary(double pixelHeight) {
     double bottomPart = 0.5 - y / 2;

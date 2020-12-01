@@ -16,15 +16,14 @@ class ButtonRun extends StatefulWidget{
 }
 
 class _ButtonRunState extends State<ButtonRun> {
-  /* The button will differ depending on _holdingButton:
-        - White when pressed
-        - Green otherwise
-
-     We use setState when we change the boolean to display
-     the other version of the button.
-  */
   bool _holdingButton = false;
 
+  /// The button will differ depending on _holdingButton:
+  ///     - White when pressed
+  ///     - Green otherwise
+  ///  We use setState when we change the boolean to display
+  ///  the other version of the button.
+  ///
   Widget build(BuildContext context) {
     return GestureDetector(
       // Tap on the button

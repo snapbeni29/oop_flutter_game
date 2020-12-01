@@ -8,7 +8,7 @@ import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
 import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
 import 'package:flutter/material.dart';
 
-// A boss is an enemy that can shoot projectiles
+/// A boss is an enemy that can shoot projectiles
 class BossController extends EnemyController with ShooterMixin {
   // Timers
   Timer _projectilesTimer;
@@ -27,7 +27,7 @@ class BossController extends EnemyController with ShooterMixin {
 
   // Deal with timers ----------------------------------------------------------
 
-  // Stop all timers
+  /// Stop all timers
   void end() {
     if (_projectilesTimer != null) _projectilesTimer.cancel();
     if (_checkPlayerTimer != null) _checkPlayerTimer.cancel();
@@ -87,19 +87,19 @@ class BossController extends EnemyController with ShooterMixin {
     });
   }
 
-  // When the boss shoots, it looks at the player location and shoots
-  // toward this position.
+  /// When the boss shoots, it looks at the player location and shoots
+  /// toward this position.
   double computeYDirection() {
     double yM = body.getMiddleHeight(pixelHeight);
-    double yP = _player.body.getBottomBoundary(pixelHeight);
+    double yP = _player.body.getMiddleHeight(pixelHeight);
     double xM = body.getMiddleWidth(pixelWidth);
     double xP = _player.body.getMiddleWidth(pixelWidth);
-    double slope = yM > yP ? (yM - yP) / (xM - xP) : (yP - yM) / (xM - xP);
+    double slope = - (yM - yP) / ((xM - xP).abs());
 
     return slope * PROJECTILE_SPEED;
   }
 
-  // The boss will start shooting when the player comes in range.
+  /// The boss will start shooting when the player comes in range.
   void enableShooting() {
     _checkPlayerTimer =
         Timer.periodic(Duration(milliseconds: 500), (_checkPlayerTimer) {

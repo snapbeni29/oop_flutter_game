@@ -10,10 +10,10 @@ import 'package:corona_bot/layouts/levels/LayoutLevel1.dart';
 import 'package:corona_bot/Body.dart';
 import 'package:flutter/material.dart';
 
-/* This class loads a layout based on the levelNumber received as parameter.
-  The level can then use the different functions create...() to retrieve
-  the different obstacles in the level.
- */
+/// This class loads a layout based on the levelNumber received as parameter.
+///  The level can then use the different functions create...() to retrieve
+///  the different obstacles in the level.
+///
 class Layout {
   List<PlatformController> _platformList = new List();
   List<EnemyController> _enemyList = new List();

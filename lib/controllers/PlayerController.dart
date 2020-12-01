@@ -50,7 +50,7 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
 
   // Deal with timers ----------------------------------------------------------
 
-  // Stop all timers
+  /// Stop all timers
   void end() {
     if (_projectilesTimer != null) _projectilesTimer.cancel();
     if (_jumpTimer != null) _jumpTimer.cancel();
@@ -153,7 +153,7 @@ class PlayerController extends ChangeNotifier with ShooterMixin {
     jump(0.0, platformList);
   }
 
-  // Checks if the player is falling from a platform, to start fall().
+  /// Checks if the player is falling from a platform, to start fall().
   bool isFallingOfPlatform(PlatformController pt) {
     if (_model.horizontal == Direction.RIGHT) {
       // If left part of player is no more on the platform => fall
