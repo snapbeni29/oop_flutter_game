@@ -162,9 +162,10 @@ class _LevelWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.blueAccent,
         border: Border.all(
-          color: Colors.black,
+          color: BORDER_COLOR,
           width: 3,
         ),
+        borderRadius: BorderRadius.circular(30.0),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

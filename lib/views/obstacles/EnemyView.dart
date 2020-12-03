@@ -1,4 +1,5 @@
 import 'package:corona_bot/Body.dart';
+import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
 import 'package:flutter/material.dart';
 
@@ -21,16 +22,20 @@ class EnemyView {
       child: Container(
         alignment: Alignment.topLeft,
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: HURT_COLOR,
           border: Border.all(
-            color: Colors.black,
+            color: BORDER_COLOR,
             width: 1,
           ),
+          borderRadius: BorderRadius.circular(15.0),
         ),
         child: Container(
           width: body.width * (health / maxHealth),
           height: body.width / 10.0,
-          color: Colors.lightGreen,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.0),
+            color: LIFE_COLOR,
+          ),
         ),
       ),
     );

@@ -23,18 +23,16 @@ class LevelView {
 
     // Player
     widgetList.add(
-      AnimatedContainer(
+      Container(
         alignment: Alignment(player.x, player.y),
-        duration: Duration(milliseconds: 0),
         child: player.displayPlayer(collision),
       ),
     );
 
     // Life bar
     widgetList.add(
-      AnimatedContainer(
+      Container(
         alignment: Alignment(0.0, -0.9),
-        duration: Duration(milliseconds: 0),
         child: player.displayPlayerLife(),
       ),
     );
@@ -45,18 +43,17 @@ class LevelView {
     // Enemies
     for (EnemyController enemy in enemyList) {
       widgetList.add(
-        AnimatedContainer(
+        Container(
           alignment: Alignment(enemy.body.x, enemy.body.y),
-          duration: Duration(milliseconds: 0),
           child: enemy.displayEnemy(),
         ),
       );
       // With their health bar
       widgetList.add(
-        AnimatedContainer(
+        Container(
           alignment:
               Alignment(enemy.body.x, enemy.body.getTopBoundary(pixelHeight)),
-          duration: Duration(milliseconds: 0),
+          padding: EdgeInsets.only(bottom: 4.0),
           child: enemy.displayEnemyLife(),
         ),
       );
@@ -65,18 +62,16 @@ class LevelView {
     // Boss
     if (!boss.dead) {
       widgetList.add(
-        AnimatedContainer(
+        Container(
           alignment: Alignment(boss.body.x, boss.body.y),
-          duration: Duration(milliseconds: 0),
           child: boss.displayEnemy(),
         ),
       );
       // With their health bar
       widgetList.add(
-        AnimatedContainer(
+        Container(
           alignment:
               Alignment(boss.body.x, boss.body.getTopBoundary(pixelHeight)),
-          duration: Duration(milliseconds: 0),
           child: boss.displayEnemyLife(),
         ),
       );

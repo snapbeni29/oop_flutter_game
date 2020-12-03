@@ -29,64 +29,69 @@ class GamePage extends StatelessWidget {
               ),
               child: Consumer<LevelController>(
                 builder: (context, level, _) {
-                  return ChangeNotifierProvider<PlayerController>.value(
-                    value: level.player,
-                    child: Consumer<PlayerController>(
-                      builder: (context, _, __) {
-                        return Stack(
-                          children: [
-                            level.displayLevel(),
-                            // Pause button ------------------------------------
-                            Container(
-                              alignment: Alignment(-0.9, -0.8),
-                              child: ButtonInstant(
-                                icon: Icon(Icons.pause),
-                                start: level.pause,
-                              ),
-                            ),
-                            // Show time, score and coins ----------------------
-                            Container(
-                              alignment: Alignment(0.7, -0.9),
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 16.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
+                  return Stack(
+                    children: [
+                      level.displayLevel(),
+                      // Pause button ------------------------------------
+                      Container(
+                        alignment: Alignment(-0.9, -0.8),
+                        child: ButtonInstant(
+                          icon: Icon(Icons.pause),
+                          start: level.pause,
+                        ),
+                      ),
+                      // Show time, score and coins ----------------------
+                      Container(
+                        alignment: Alignment(0.7, -0.9),
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Column(
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            "Time: " + level.time,
-                                            style: TextStyle(
-                                              fontSize: 24.0,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Score: " +
-                                                level.score.toStringAsFixed(0),
-                                            style: TextStyle(
-                                              fontSize: 24.0,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Coins: " + level.coins.toString(),
-                                            style: TextStyle(
-                                              fontSize: 24.0,
-                                            ),
-                                          ),
-                                        ],
+                                          vertical: 4.0, horizontal: 6.0),
+                                      child: Text(
+                                        "Time: " + level.time,
+                                        style: TextStyle(
+                                          fontSize: 24.0,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 6.0),
+                                      child: Text(
+                                        "Score: " +
+                                            level.score.toStringAsFixed(0),
+                                        style: TextStyle(
+                                          fontSize: 24.0,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 6.0),
+                                      child: Text(
+                                        "Coins: " + level.coins.toString(),
+                                        style: TextStyle(
+                                          fontSize: 24.0,
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),

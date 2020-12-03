@@ -109,16 +109,20 @@ class PlayerView {
       child: Container(
         alignment: Alignment.topLeft,
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: HURT_COLOR,
           border: Border.all(
-            color: Colors.black,
+            color: BORDER_COLOR,
             width: 3,
           ),
+          borderRadius: BorderRadius.circular(15.0),
         ),
         child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.0),
+            color: LIFE_COLOR,
+          ),
           width: lifeWidth * life,
           height: lifeWidth / 10.0,
-          color: Colors.lightGreen,
         ),
       ),
     );

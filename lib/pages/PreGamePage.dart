@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/controllers/LevelController.dart';
 import 'package:corona_bot/controllers/PlayerController.dart';
 import 'package:corona_bot/pages/GamePage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -51,12 +54,14 @@ class _LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<_LoadingPage> {
+
   Future<bool> _loadImages() {
     return Future<bool>.delayed(
       Duration(seconds: 4),
       () => true,
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -80,19 +85,51 @@ class _LoadingPageState extends State<_LoadingPage> {
                       fit: BoxFit.fill,
                     ),
                   ),
-                  child: Container(
-                    alignment: Alignment(0, 1),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 14.0,
-                      height:
-                          (MediaQuery.of(context).size.height * 5.0 / 7.0) / 5,
-                      decoration: BoxDecoration(
-                        image: new DecorationImage(
-                          image: new AssetImage("images/Player/loadingGif.gif"),
-                          fit: BoxFit.fill,
+                  child: Stack(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 4.0),
+                        alignment: Alignment(0, -0.9),
+                        child: Text(
+                          "Loading",
+                          style: TextStyle(
+                            decoration: TextDecoration.none,
+                            fontSize: 40.0,
+                            fontFamily: "Cs",
+                            color: Color(0xff34414e),
+                          ),
                         ),
                       ),
-                    ),
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: MediaQuery.of(context).size.width / 5),
+                        alignment: Alignment(0, -0.7),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15.0),
+                          child: LinearProgressIndicator(
+                            minHeight: MediaQuery.of(context).size.height / 20,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.greenAccent,),
+                            backgroundColor: Color(0xff34414e),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        alignment: Alignment(0, 1),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 14.0,
+                          height:
+                              (MediaQuery.of(context).size.height * 5.0 / 7.0) /
+                                  5,
+                          decoration: BoxDecoration(
+                            image: new DecorationImage(
+                              image: new AssetImage(
+                                  "images/Player/loadingGif.gif"),
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

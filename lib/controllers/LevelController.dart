@@ -353,13 +353,14 @@ class LevelController extends ChangeNotifier {
           // Collision with a platform
           _collision = false;
           for (PlatformController pt in _platformList) {
-            if (_player.body.collideHorizontally(
-                pt.body, _player.direction, SPEED, _pixelWidth, _pixelHeight)) {
-              _collision = true;
-              break;
+            if (pt.body.x < 1 && pt.body.x > -1) {
+              if (_player.body.collideHorizontally(pt.body, _player.direction,
+                  SPEED, _pixelWidth, _pixelHeight)) {
+                _collision = true;
+                break;
+              }
             }
           }
-
           if (!_collision) {
             // Update platforms
             for (PlatformController pt in _platformList) {
@@ -413,10 +414,13 @@ class LevelController extends ChangeNotifier {
           // Collision with a platform
           _collision = false;
           for (PlatformController pt in _platformList) {
-            if (_player.body.collideHorizontally(
-                pt.body, _player.direction, SPEED, _pixelWidth, _pixelHeight)) {
-              _collision = true;
-              break;
+            if(pt.body.x < 1 && pt.body.x > -1) {
+              if (_player.body.collideHorizontally(
+                  pt.body, _player.direction, SPEED, _pixelWidth,
+                  _pixelHeight)) {
+                _collision = true;
+                break;
+              }
             }
           }
 

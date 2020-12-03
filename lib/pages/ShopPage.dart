@@ -129,7 +129,7 @@ class _ShopPageState extends State<ShopPage> {
                 "Abilities",
                 style: TextStyle(
                   fontSize: 40.0,
-                  color: Color(0xffd2691e),
+                  color: BORDER_COLOR,
                 ),
               ),
             ),
@@ -159,7 +159,7 @@ class _ShopPageState extends State<ShopPage> {
                 "Accessories",
                 style: TextStyle(
                   fontSize: 40.0,
-                  color: Color(0xffd2691e),
+                  color: BORDER_COLOR,
                 ),
               ),
             ),
@@ -280,9 +280,9 @@ class _ShopPageState extends State<ShopPage> {
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           color: Colors.greenAccent,
-          borderRadius: BorderRadius.circular(5.0),
+          borderRadius: BorderRadius.circular(15.0),
           border: Border.all(
-            color: Color(0xffd2691e),
+            color: BORDER_COLOR,
             width: 8,
           ),
         ),
@@ -330,9 +330,9 @@ class _ShopPageState extends State<ShopPage> {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.greenAccent,
-        borderRadius: BorderRadius.circular(5.0),
+        borderRadius: BorderRadius.circular(15.0),
         border: Border.all(
-          color: Color(0xffd2691e),
+          color: BORDER_COLOR,
           width: 8,
         ),
       ),
@@ -378,9 +378,9 @@ class _ShopPageState extends State<ShopPage> {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.greenAccent,
-        borderRadius: BorderRadius.circular(5.0),
+        borderRadius: BorderRadius.circular(15.0),
         border: Border.all(
-          color: Color(0xffd2691e),
+          color: BORDER_COLOR,
           width: 8,
         ),
       ),

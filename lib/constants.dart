@@ -12,6 +12,12 @@ const Color BUTTON_COLOR = Colors.greenAccent;
 const Color BUTTON_STUCK = Colors.grey;
 const Color BUTTON_PRESSED = Colors.white;
 
+// Colors
+
+const Color LIFE_COLOR = Color(0xff50c878);
+const Color HURT_COLOR =  Color(0xffde1738);
+const Color BORDER_COLOR = Color(0xff34414e);
+
 // AppBar color
 const Color APPBAR_COLOR = Color(0xff10cfef);
 
