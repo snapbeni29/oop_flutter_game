@@ -45,21 +45,29 @@ class Layout {
     width = MediaQuery.of(context).size.width;
   }
 
+  /// Creates all the Platforms of the level [levelNumber] and returns the list
+  /// of all their controllers.
   List<PlatformController> createPlatforms() {
     List<BodyConstants> platformsBody = _layout.getPlatforms;
 
     for (var i = 0; i < platformsBody.length; i++) {
-      _platformList.add(new PlatformController(new Body(
-        width: width / platformsBody[i].w,
-        height: height / platformsBody[i].h,
-        x: platformsBody[i].x,
-        y: platformsBody[i].y,
-      )));
+      _platformList.add(
+        new PlatformController(
+          new Body(
+            width: width / platformsBody[i].w,
+            height: height / platformsBody[i].h,
+            x: platformsBody[i].x,
+            y: platformsBody[i].y,
+          ),
+        ),
+      );
     }
 
     return _platformList;
   }
 
+  /// Creates all the Enemies of the level [levelNumber] and returns the list
+  /// of all their controllers.
   List<EnemyController> createEnemies() {
     List<BodyConstants> enemiesBody = _layout.getEnemyAreas;
 
@@ -86,6 +94,7 @@ class Layout {
     return _enemyList;
   }
 
+  /// Creates the Boss of the level [levelNumber] and returns its controller
   BossController createBoss(double pw, double ph, PlayerController player) {
     BodyConstants bossLevel = _layout.getBossEnemy;
 
@@ -109,6 +118,8 @@ class Layout {
     );
   }
 
+  /// Creates all the Collectables of the level [levelNumber] and returns the
+  /// list of all their controllers.
   List<CollectableController> createCollectables() {
     List<BodyConstants> collectablesBody = _layout.getCollectables;
 
@@ -120,7 +131,8 @@ class Layout {
           ? 80 // narrower
           : collectablesBody[i].w; // normal size
 
-      _collectableList.add(new CollectableController(
+      _collectableList.add(
+        new CollectableController(
           new Body(
             // hit-box of the collectable
             width: width / widthDivisor,
@@ -135,7 +147,9 @@ class Layout {
             height: height / collectablesBody[i].h,
             x: collectablesBody[i].x,
             y: collectablesBody[i].y,
-          )));
+          ),
+        ),
+      );
     }
 
     return _collectableList;

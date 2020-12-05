@@ -2,7 +2,9 @@ import 'package:corona_bot/Body.dart';
 import 'package:corona_bot/constants.dart';
 import 'package:flutter/material.dart';
 
+/// View class of a collectable
 class CollectableView {
+  /// Displays a collectable at its location.
   Widget displayPlatform(Body body, String type) {
     Image img;
     if (type == COIN) {

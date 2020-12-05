@@ -122,32 +122,34 @@ class PlayerController with ShooterMixin {
         // Collision detection
         bool collision = false;
         for (PlatformController pt in platformList) {
-          // Bump into a platform while jumping up
-          if (_model.vertical == Direction.UP &&
-              _body.collideVertically(
-                  pt.body, _model.vertical, speed, pixelWidth, pixelHeight)) {
-            print("collide platform");
-            collision = true;
-            _model.jump = Direction.STILL;
-            secondJump = false;
-            _height = 0.0;
-            _jumpTimer.cancel();
-            fall(platformList);
-            break;
-          }
-          // Land onto a platform
-          else if (_model.vertical == Direction.DOWN &&
-              _body.collideVertically(
-                  pt.body, _model.vertical, speed, pixelWidth, pixelHeight)) {
-            _body.y = (pt.body.getTopBoundary(pixelHeight) -
-                    _body.height * pixelHeight / 2.0) /
-                (1 - pixelHeight * _body.height / 2.0);
-            collision = true;
-            _height = 0.0;
-            _model.jump = Direction.STILL;
-            secondJump = false;
-            _jumpTimer.cancel();
-            break;
+          if(pt.body.x < 1 && pt.body.x > -1) {
+            // Bump into a platform while jumping up
+            if (_model.vertical == Direction.UP &&
+                _body.collideVertically(
+                    pt.body, _model.vertical, speed, pixelWidth, pixelHeight)) {
+              print("collide platform");
+              collision = true;
+              _model.jump = Direction.STILL;
+              secondJump = false;
+              _height = 0.0;
+              _jumpTimer.cancel();
+              fall(platformList);
+              break;
+            }
+            // Land onto a platform
+            else if (_model.vertical == Direction.DOWN &&
+                _body.collideVertically(
+                    pt.body, _model.vertical, speed, pixelWidth, pixelHeight)) {
+              _body.y = (pt.body.getTopBoundary(pixelHeight) -
+                  _body.height * pixelHeight / 2.0) /
+                  (1 - pixelHeight * _body.height / 2.0);
+              collision = true;
+              _height = 0.0;
+              _model.jump = Direction.STILL;
+              secondJump = false;
+              _jumpTimer.cancel();
+              break;
+            }
           }
         }
 

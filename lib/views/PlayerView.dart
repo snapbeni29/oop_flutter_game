@@ -3,7 +3,12 @@ import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
 import 'package:flutter/material.dart';
 
+/// View class of the player
 class PlayerView {
+  /// Displays the player.
+  ///
+  /// Depending on the state of the player and if he had bought a skin or not
+  /// the appearance of the player changes.
   Widget displayPlayer(
       int playerSprite,
       Direction vertical,
@@ -133,11 +138,13 @@ class PlayerView {
     List<Widget> widgetProjectileList = new List();
 
     for (ProjectileController projectile in projectileList) {
-      widgetProjectileList.add(AnimatedContainer(
-        alignment: Alignment(projectile.body.x, projectile.body.y),
-        duration: Duration(milliseconds: 0),
-        child: projectile.displayProjectile(),
-      ));
+      widgetProjectileList.add(
+        AnimatedContainer(
+          alignment: Alignment(projectile.body.x, projectile.body.y),
+          duration: Duration(milliseconds: 0),
+          child: projectile.displayProjectile(),
+        ),
+      );
     }
 
     return Stack(

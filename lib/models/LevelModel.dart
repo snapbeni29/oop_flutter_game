@@ -1,5 +1,6 @@
 import 'package:corona_bot/constants.dart';
 
+/// Model class of a level
 class LevelModel {
   double _score = 0.0;
   Stopwatch _timer = new Stopwatch();

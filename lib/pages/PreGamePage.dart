@@ -54,14 +54,12 @@ class _LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<_LoadingPage> {
-
   Future<bool> _loadImages() {
     return Future<bool>.delayed(
       Duration(seconds: 4),
       () => true,
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +76,7 @@ class _LoadingPageState extends State<_LoadingPage> {
               Flexible(
                 flex: 5,
                 fit: FlexFit.tight,
+                // Container of 5/7 of screen on the top -----------------------
                 child: Container(
                   decoration: BoxDecoration(
                     image: new DecorationImage(
@@ -85,8 +84,10 @@ class _LoadingPageState extends State<_LoadingPage> {
                       fit: BoxFit.fill,
                     ),
                   ),
+                  // On the container we place a loading bar + the robot -------
                   child: Stack(
                     children: [
+                      // Text Loading ------------------------------------------
                       Container(
                         padding: EdgeInsets.symmetric(vertical: 4.0),
                         alignment: Alignment(0, -0.9),
@@ -100,19 +101,24 @@ class _LoadingPageState extends State<_LoadingPage> {
                           ),
                         ),
                       ),
+                      // Loading bar with rounded border -----------------------
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: MediaQuery.of(context).size.width / 5),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 16.0,
+                            horizontal: MediaQuery.of(context).size.width / 5),
                         alignment: Alignment(0, -0.7),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(15.0),
                           child: LinearProgressIndicator(
                             minHeight: MediaQuery.of(context).size.height / 20,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.greenAccent,),
+                              Colors.greenAccent,
+                            ),
                             backgroundColor: Color(0xff34414e),
                           ),
                         ),
                       ),
+                      // Gif of robot running ----------------------------------
                       Container(
                         alignment: Alignment(0, 1),
                         child: Container(
@@ -133,6 +139,7 @@ class _LoadingPageState extends State<_LoadingPage> {
                   ),
                 ),
               ),
+              // Bottom of screen with the ground ------------------------------
               Flexible(
                 flex: 2,
                 fit: FlexFit.tight,
@@ -150,13 +157,15 @@ class _LoadingPageState extends State<_LoadingPage> {
         );
         // Load images and display them out of screen
         for (var name in imagePaths) {
-          list.add(Container(
-            alignment: Alignment(0, -3),
-            child: Image.asset(
-              name,
-              color: Color.fromRGBO(0, 0, 0, 0.0),
+          list.add(
+            Container(
+              alignment: Alignment(0, -3),
+              child: Image.asset(
+                name,
+                color: Color.fromRGBO(0, 0, 0, 0.0),
+              ),
             ),
-          ));
+          );
         }
         return Stack(
           children: list,

@@ -2,6 +2,7 @@ import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/Body.dart';
 import 'package:corona_bot/models/ObstacleModel.dart';
 
+/// Model class of an enemy
 class EnemyModel extends ObstacleModel {
   int maxHealth;
   int _health;

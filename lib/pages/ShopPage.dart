@@ -32,6 +32,7 @@ class _ShopPageState extends State<ShopPage> {
     });
   }
 
+  /// Displays the number of coins
   Widget displayCoins() {
     return Padding(
       padding: const EdgeInsets.only(right: 100.0),
@@ -47,6 +48,7 @@ class _ShopPageState extends State<ShopPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Widget representing the image used in the double jump item
     Widget doubleJumpDisplay = Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Image.asset(
@@ -55,6 +57,7 @@ class _ShopPageState extends State<ShopPage> {
       ),
     );
 
+    // Widget representing the image used in the +1 projectiles item
     Widget extendShootDisplay = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -76,6 +79,7 @@ class _ShopPageState extends State<ShopPage> {
       ],
     );
 
+    // Widget representing the image used in the Sombrero item
     Widget sombreroDisplay = Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Image.asset(
@@ -85,19 +89,23 @@ class _ShopPageState extends State<ShopPage> {
     );
 
     return Scaffold(
+      // AppBar ----------------------------------------------------------------
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: APPBAR_COLOR,
+        // Go back button on the left ------------------------------------------
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.popAndPushNamed(context, '/');
           },
         ),
+        // title ---------------------------------------------------------------
         title: Text(
           "CoronaBot",
           style: TextStyle(fontFamily: "Cs"),
         ),
+        // Coins on the right --------------------------------------------------
         actions: <Widget>[
           Center(
             child: Padding(
@@ -114,15 +122,19 @@ class _ShopPageState extends State<ShopPage> {
           ),
         ],
       ),
+      // Body ------------------------------------------------------------------
       body: Container(
+        // background image
         decoration: new BoxDecoration(
           image: new DecorationImage(
             image: new AssetImage("images/Background/full-background.png"),
             fit: BoxFit.cover,
           ),
         ),
+        // List of all the items -----------------------------------------------
         child: ListView(
           children: [
+            // Start of Abilities part -----------------------------------------
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -133,6 +145,7 @@ class _ShopPageState extends State<ShopPage> {
                 ),
               ),
             ),
+            // Grid view of the Abilities items --------------------------------
             GridView.count(
               physics: NeverScrollableScrollPhysics(),
               // to disable GridView's scrolling
@@ -153,6 +166,7 @@ class _ShopPageState extends State<ShopPage> {
                     : _acquiredItem(extendShootDisplay, "+1 Projectile", "20"),
               ],
             ),
+            // Start of Accessories part ---------------------------------------
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -163,11 +177,11 @@ class _ShopPageState extends State<ShopPage> {
                 ),
               ),
             ),
+            // Grid view of the Accessories items ------------------------------
             GridView.count(
               physics: NeverScrollableScrollPhysics(),
               // to disable GridView's scrolling
               shrinkWrap: true,
-              // You won't see infinite size error
               childAspectRatio: 1,
               primary: false,
               padding:
@@ -187,20 +201,32 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
+  /// Displays a shop item whit a gesture detector.
+  ///
+  /// You will be able to buy the item if you have enough.
+  ///   -> In this case an alert dialog pop to confirm the purchase.
+  /// If you don't have enough coins.
+  ///   -> An alert dialog tells you that you don't have enough.
   Widget _shopItem(Widget img, String name, String cost) {
     return GestureDetector(
       onTap: () {
         return showDialog(
           context: context,
           builder: (_) {
+            // if you have enough coins
             if (coins >= int.parse(cost)) {
+              // Alert Dialog to confirm the purchase---------------------------
               return AlertDialog(
+                // title -------------------------------------------------------
                 title: Center(child: Text("You are going to buy")),
                 backgroundColor: Colors.blueAccent,
+                // content -----------------------------------------------------
                 content: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
+                    // Shop icon without gesture detector ----------------------
                     _shopIcon(img, name, cost),
+                    // Button Go back and Confirm ------------------------------
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
@@ -255,6 +281,7 @@ class _ShopPageState extends State<ShopPage> {
                 elevation: 10.0,
               );
             } else {
+              // Alert Dialog if you don't have enough -------------------------
               return AlertDialog(
                 title: Center(child: Text("You don't have enough coins")),
                 elevation: 10.0,
@@ -276,6 +303,7 @@ class _ShopPageState extends State<ShopPage> {
           },
         );
       },
+      // Container that hold the item ------------------------------------------
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -286,6 +314,7 @@ class _ShopPageState extends State<ShopPage> {
             width: 8,
           ),
         ),
+        // Column with the cost, the name, and the item ------------------------
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
@@ -323,8 +352,7 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
-  // Same as shop item but without gesture detector, in order to display the
-  // item in the AlertDialog
+  /// Displays shop item but without gesture detector
   Widget _shopIcon(Widget img, String name, String cost) {
     return Container(
       padding: const EdgeInsets.all(8),
@@ -372,7 +400,7 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
-  // Display of a shop item if it has been purchased
+  /// Displays of a shop item that has been purchased
   Widget _acquiredItem(Widget img, String name, String cost) {
     return Container(
       padding: const EdgeInsets.all(8),

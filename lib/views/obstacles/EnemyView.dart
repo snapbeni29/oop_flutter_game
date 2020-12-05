@@ -3,7 +3,12 @@ import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
 import 'package:flutter/material.dart';
 
+/// View class of an enemy.
 class EnemyView {
+  /// Displays an enemy/boss at its location.
+  ///
+  /// The skin of the enemy/boss is an image held in the "images/" folder. An
+  /// enemy can only look in one direction.
   Widget displayEnemy(Body body, int type) {
     return Container(
       width: body.width,
@@ -15,6 +20,7 @@ class EnemyView {
     );
   }
 
+  /// Displays the health bar of an enemy/boss
   Widget displayHealthBar(Body body, int health, int maxHealth) {
     return Container(
       width: body.width,
@@ -41,15 +47,18 @@ class EnemyView {
     );
   }
 
+  /// Displays the boss' projectiles
   Widget displayProjectiles(List<ProjectileController> projectileList) {
     List<Widget> widgetProjectileList = new List();
 
     for (ProjectileController projectile in projectileList) {
-      widgetProjectileList.add(AnimatedContainer(
-        alignment: Alignment(projectile.body.x, projectile.body.y),
-        duration: Duration(milliseconds: 0),
-        child: projectile.displayProjectile(),
-      ));
+      widgetProjectileList.add(
+        AnimatedContainer(
+          alignment: Alignment(projectile.body.x, projectile.body.y),
+          duration: Duration(milliseconds: 0),
+          child: projectile.displayProjectile(),
+        ),
+      );
     }
 
     return Stack(

@@ -5,7 +5,16 @@ import 'package:corona_bot/controllers/obstacles/EnemyController.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
 import 'package:flutter/material.dart';
 
+/// View class of a level.
 class LevelView {
+  /// Displays a Level.
+  ///
+  /// It displays all the useful elements :
+  ///   - The player and its projectiles
+  ///   - The collectables
+  ///   - The enemies
+  ///   - The boss and its projectiles
+  ///   - The life bars of the player and enemies
   Widget displayLevel(
       PlayerController player,
       List<PlatformController> platformList,

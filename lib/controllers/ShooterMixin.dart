@@ -47,11 +47,13 @@ abstract class ShooterMixin {
       bool collide = false;
       // Collide with a platform
       for (PlatformController pt in platformList) {
-        if (projectile.body.collide(pt.body, pixelWidth, pixelHeight)) {
-          collide = true;
-          aliveProjectile--;
-          toRemove.add(projectile);
-          break;
+        if(pt.body.x < 1 && pt.body.x > -1) {
+          if (projectile.body.collide(pt.body, pixelWidth, pixelHeight)) {
+            collide = true;
+            aliveProjectile--;
+            toRemove.add(projectile);
+            break;
+          }
         }
       }
       if (!collide) {
