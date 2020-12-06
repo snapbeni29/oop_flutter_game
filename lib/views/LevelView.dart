@@ -5,9 +5,9 @@ import 'package:corona_bot/controllers/obstacles/EnemyController.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
 import 'package:flutter/material.dart';
 
-/// View class of a level.
+/// View class of a level
 class LevelView {
-  /// Displays a Level.
+  /// Displays a Level
   ///
   /// It displays all the useful elements :
   ///   - The player and its projectiles
@@ -61,7 +61,7 @@ class LevelView {
       widgetList.add(
         Container(
           alignment:
-              Alignment(enemy.body.x, enemy.body.getTopBoundary(pixelHeight)),
+          Alignment(enemy.body.x, enemy.body.getTopBoundary(pixelHeight)),
           padding: EdgeInsets.only(bottom: 4.0),
           child: enemy.displayEnemyLife(),
         ),
@@ -80,7 +80,7 @@ class LevelView {
       widgetList.add(
         Container(
           alignment:
-              Alignment(boss.body.x, boss.body.getTopBoundary(pixelHeight)),
+          Alignment(boss.body.x, boss.body.getTopBoundary(pixelHeight)),
           child: boss.displayEnemyLife(),
         ),
       );

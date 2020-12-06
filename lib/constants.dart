@@ -7,15 +7,16 @@ const double SPEED = 0.025;
 const double PROJECTILE_SPEED = 0.03;
 const double ENEMY_SPEED = 0.01;
 
+// An obstacle is on screen if body.x > -onScreen && body.x < onScreen
+const double onScreen = 1.2;
+
 // Button colors
 const Color BUTTON_COLOR = Colors.greenAccent;
 const Color BUTTON_STUCK = Colors.grey;
 const Color BUTTON_PRESSED = Colors.white;
 
-// Colors
-
 const Color LIFE_COLOR = Color(0xff50c878);
-const Color HURT_COLOR =  Color(0xffde1738);
+const Color HURT_COLOR = Color(0xffde1738);
 const Color BORDER_COLOR = Color(0xff34414e);
 
 // AppBar color
@@ -28,6 +29,8 @@ const int INIT_PROJECTILE = 3;
 const int NB_LEVELS = 5;
 const double TIME_LEVEL = 200.5; // in seconds
 const int BOSS_HEALTH = 20;
+const int ENEMY_HEALTH = 3;
+const int PLATFORM_HEALTH = 6;
 
 // Collectable types
 const String BLUE_POTION = "bluePot"; // freezing potion during potion 10s
@@ -44,8 +47,10 @@ const List<String> imagePaths = [
   'images/Background/layer-1.png',
   'images/Background/layer-2.png',
   'images/Background/shop.png',
+  'images/Background/tile_break.png',
   'images/Background/tile-1.png',
   'images/Background/acquired.png',
+  'images/Background/tile_breakable.png',
   'images/Accessories/sombrero.png',
   'images/Objects/BulletBlue_004.png',
   'images/Objects/Bullet_004.png',

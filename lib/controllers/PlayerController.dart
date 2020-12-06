@@ -10,7 +10,7 @@ import 'package:corona_bot/models/PlayerModel.dart';
 import 'package:corona_bot/views/PlayerView.dart';
 import 'package:flutter/material.dart';
 
-class PlayerController with ShooterMixin {
+class PlayerController extends ChangeNotifier with ShooterMixin {
   PlayerModel _model;
   PlayerView _view;
 
@@ -22,6 +22,7 @@ class PlayerController with ShooterMixin {
   String _hat;
   bool _doubleJump;
   bool secondJump = false;
+  int _defaultProjectiles;
 
   // Variables to deal with gravity
   double _time = 0.0;
@@ -45,6 +46,7 @@ class PlayerController with ShooterMixin {
     _view = new PlayerView();
 
     maxProjectile = maxProjectiles;
+    _defaultProjectiles = maxProjectiles;
 
     double w = MediaQuery.of(context).size.width / 14.0;
     double h = (MediaQuery.of(context).size.height * 5.0 / 7.0) / 5;
@@ -122,12 +124,12 @@ class PlayerController with ShooterMixin {
         // Collision detection
         bool collision = false;
         for (PlatformController pt in platformList) {
-          if(pt.body.x < 1 && pt.body.x > -1) {
+          // Check only the platforms on screen
+          if (pt.body.x < onScreen && pt.body.x > -onScreen) {
             // Bump into a platform while jumping up
             if (_model.vertical == Direction.UP &&
                 _body.collideVertically(
                     pt.body, _model.vertical, speed, pixelWidth, pixelHeight)) {
-              print("collide platform");
               collision = true;
               _model.jump = Direction.STILL;
               secondJump = false;
@@ -141,7 +143,7 @@ class PlayerController with ShooterMixin {
                 _body.collideVertically(
                     pt.body, _model.vertical, speed, pixelWidth, pixelHeight)) {
               _body.y = (pt.body.getTopBoundary(pixelHeight) -
-                  _body.height * pixelHeight / 2.0) /
+                      _body.height * pixelHeight / 2.0) /
                   (1 - pixelHeight * _body.height / 2.0);
               collision = true;
               _height = 0.0;
@@ -292,7 +294,7 @@ class PlayerController with ShooterMixin {
         if (_redPotTimer.isRunning) {
           _redPotTimer.reset();
           _redPotTimer.stop();
-          maxProjectile = 3;
+          maxProjectile = _defaultProjectiles;
         }
         if (_bluePotTimer.isRunning) {
           _bluePotTimer.reset();
@@ -342,7 +344,7 @@ class PlayerController with ShooterMixin {
     if (_redPotTimer.elapsedMilliseconds > 5000) {
       _redPotTimer.reset();
       _redPotTimer.stop();
-      maxProjectile = 3;
+      maxProjectile = _defaultProjectiles;
     }
     if (_bluePotTimer.elapsedMilliseconds > 10000) {
       _bluePotTimer.reset();

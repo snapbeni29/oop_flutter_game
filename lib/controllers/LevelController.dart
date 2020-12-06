@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/controllers/PlayerController.dart';
 import 'package:corona_bot/controllers/obstacles/BossController.dart';
+import 'package:corona_bot/controllers/obstacles/BreakPlatformController.dart';
 import 'package:corona_bot/controllers/obstacles/CollectableController.dart';
 import 'package:corona_bot/controllers/obstacles/EnemyController.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
@@ -157,66 +158,75 @@ class LevelController extends ChangeNotifier {
       context: context,
       barrierDismissible: false,
       builder: (_) {
-        return AlertDialog(
-          title: Center(child: Text(title)),
-          backgroundColor: Colors.blueAccent,
-          content: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              Container(
-                child: Text("Score: " + _model.score.toStringAsFixed(0)),
-              ),
-              RaisedButton(
-                elevation: 2.0,
-                onPressed: () {
-                  if (finalButtonGreen) {
-                    // full life if not in the case "pause"
-                    restart(!buttonGreen);
-                    Navigator.of(context).pop();
-                  }
-                },
-                child: Text(buttonText),
-                color: finalButtonGreen ? BUTTON_COLOR : BUTTON_STUCK,
-              ),
-              RaisedButton(
-                elevation: 2.0,
-                onPressed: () async {
-                  // We only save the score if the game was won
-                  if (buttonGrey) {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    int curCoins = prefs.getInt('coins');
-                    List<String> curScoreLevel =
-                        prefs.getStringList("scoreLevel");
-
-                    curCoins = curCoins == null ? coins : curCoins + coins;
-                    prefs.setInt('coins', curCoins);
-
-                    if (curScoreLevel == null) {
-                      curScoreLevel = <String>[];
-                      curScoreLevel.add("$_levelNumber:${_model.score}");
-                    } else {
-                      int maxLvl = curScoreLevel.length;
-                      // level is the last in the list
-                      if (_levelNumber <= maxLvl) {
-                        if (_model.score >
-                            double.parse(
-                                curScoreLevel[_levelNumber - 1].split(":")[1]))
-                          curScoreLevel[_levelNumber - 1] =
-                              "$_levelNumber:${_model.score}";
-                      } else
-                        curScoreLevel.add("$_levelNumber:${_model.score}");
+        return WillPopScope(
+          onWillPop: () async {
+            if (finalButtonGreen && !_player.dead) {
+              restart(!buttonGreen);
+              return true;
+            }
+            return false;
+          },
+          child: AlertDialog(
+            title: Center(child: Text(title)),
+            backgroundColor: Colors.blueAccent,
+            content: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Container(
+                  child: Text("Score: " + _model.score.toStringAsFixed(0)),
+                ),
+                RaisedButton(
+                  elevation: 2.0,
+                  onPressed: () {
+                    if (finalButtonGreen) {
+                      // full life if not in the case "pause"
+                      restart(!buttonGreen);
+                      Navigator.of(context).pop();
                     }
-                    prefs.setStringList('scoreLevel', curScoreLevel);
-                  }
-                  end(context);
-                },
-                child: Text("Go to Level Menu"),
-                color: BUTTON_COLOR,
-              ),
-            ],
+                  },
+                  child: Text(buttonText),
+                  color: finalButtonGreen ? BUTTON_COLOR : BUTTON_STUCK,
+                ),
+                RaisedButton(
+                  elevation: 2.0,
+                  onPressed: () async {
+                    // We only save the score if the game was won
+                    if (buttonGrey) {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      int curCoins = prefs.getInt('coins');
+                      List<String> curScoreLevel =
+                          prefs.getStringList("scoreLevel");
+
+                      curCoins = curCoins == null ? coins : curCoins + coins;
+                      prefs.setInt('coins', curCoins);
+
+                      if (curScoreLevel == null) {
+                        curScoreLevel = <String>[];
+                        curScoreLevel.add("$_levelNumber:${_model.score}");
+                      } else {
+                        int maxLvl = curScoreLevel.length;
+                        // level is the last in the list
+                        if (_levelNumber <= maxLvl) {
+                          if (_model.score >
+                              double.parse(
+                                  curScoreLevel[_levelNumber - 1].split(":")[1]))
+                            curScoreLevel[_levelNumber - 1] =
+                                "$_levelNumber:${_model.score}";
+                        } else
+                          curScoreLevel.add("$_levelNumber:${_model.score}");
+                      }
+                      prefs.setStringList('scoreLevel', curScoreLevel);
+                    }
+                    end(context);
+                  },
+                  child: Text("Go to Level Menu"),
+                  color: BUTTON_COLOR,
+                ),
+              ],
+            ),
+            elevation: 10.0,
           ),
-          elevation: 10.0,
         );
       },
     );
@@ -327,6 +337,14 @@ class LevelController extends ChangeNotifier {
           }
         }
         _collectableList.removeWhere((e) => toRemove.contains(e));
+        // Remove broken platforms
+        List<PlatformController> toRemove2 = <PlatformController>[];
+        for (PlatformController pt in _platformList) {
+          if(pt is BreakPlatformController && pt.dead){
+            toRemove2.add(pt);
+          }
+        }
+        _platformList.removeWhere((e) => toRemove2.contains(e));
 
         notifyListeners();
       }
@@ -353,14 +371,17 @@ class LevelController extends ChangeNotifier {
           // Collision with a platform
           _collision = false;
           for (PlatformController pt in _platformList) {
-            if (pt.body.x < 1 && pt.body.x > -1) {
-              if (_player.body.collideHorizontally(pt.body, _player.direction,
-                  SPEED, _pixelWidth, _pixelHeight)) {
+            // We only check the platforms on screen
+            if (pt.body.x < onScreen && pt.body.x > -onScreen) {
+              if (_player.body.collideHorizontally(
+                  pt.body, _player.direction, SPEED, _pixelWidth,
+                  _pixelHeight)) {
                 _collision = true;
                 break;
               }
             }
           }
+
           if (!_collision) {
             // Update platforms
             for (PlatformController pt in _platformList) {
@@ -414,7 +435,8 @@ class LevelController extends ChangeNotifier {
           // Collision with a platform
           _collision = false;
           for (PlatformController pt in _platformList) {
-            if(pt.body.x < 1 && pt.body.x > -1) {
+            // We only check the platforms on screen
+            if (pt.body.x < onScreen && pt.body.x > -onScreen) {
               if (_player.body.collideHorizontally(
                   pt.body, _player.direction, SPEED, _pixelWidth,
                   _pixelHeight)) {

@@ -1,5 +1,4 @@
 import 'package:corona_bot/controllers/LevelController.dart';
-import 'package:corona_bot/controllers/PlayerController.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:corona_bot/buttons/ButtonInstant.dart';

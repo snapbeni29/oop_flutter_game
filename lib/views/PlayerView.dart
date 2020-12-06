@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 class PlayerView {
   /// Displays the player.
   ///
-  /// Depending on the state of the player and if he had bought a skin or not
-  /// the appearance of the player changes.
+  /// The appearance changes when buying a skin in the shop
   Widget displayPlayer(
       int playerSprite,
       Direction vertical,
@@ -39,7 +38,7 @@ class PlayerView {
         img = Image.asset('images/Player/Jump' + hat + ' (9).png');
       }
     } else if ((horizontal == Direction.RIGHT ||
-            horizontal == Direction.LEFT) &&
+        horizontal == Direction.LEFT) &&
         collision) {
       if (red) {
         img = Image.asset('images/Player/Idle' + hat + 'Red (1).png');

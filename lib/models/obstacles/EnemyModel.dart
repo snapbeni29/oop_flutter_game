@@ -1,18 +1,19 @@
 import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/Body.dart';
 import 'package:corona_bot/models/ObstacleModel.dart';
+import 'package:corona_bot/models/obstacles/DamageMixin.dart';
 
 /// Model class of an enemy
-class EnemyModel extends ObstacleModel {
-  int maxHealth;
-  int _health;
+class EnemyModel extends ObstacleModel with DamageMixin {
   Body area;
   double _speed = ENEMY_SPEED;
   int type;
 
-  EnemyModel({Body body, this.maxHealth, this.area, this.type})
-      : _health = maxHealth,
-        super(body: body);
+  EnemyModel({Body body, int mHealth, this.area, this.type})
+      : super(body: body) {
+    maxHealth = mHealth;
+    health = maxHealth;
+  }
 
   /// An enemy moves on its assigned platform
   void moveOnce(double pW) {
@@ -36,12 +37,4 @@ class EnemyModel extends ObstacleModel {
     body.x -= SPEED;
     area.x -= SPEED;
   }
-
-  void damage() {
-    _health--;
-  }
-
-  bool get dead => _health <= 0;
-
-  int get health => _health;
 }

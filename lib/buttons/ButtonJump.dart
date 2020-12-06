@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:corona_bot/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +18,7 @@ class ButtonJump extends StatefulWidget {
 
 class _ButtonJumpState extends State<ButtonJump> {
   final double _minVelocity = 3.5;
+  final double _maxVelocity = 5.5;
   final Stopwatch sw = new Stopwatch();
 
   /// The height of the jump will vary with the intensity of the tap:
@@ -37,7 +40,9 @@ class _ButtonJumpState extends State<ButtonJump> {
        */
       onTapUp: (details) {
         if (sw.isRunning) {
-          widget.start(sw.elapsedMilliseconds / 200 + _minVelocity);
+          double velocity =
+              min(sw.elapsedMilliseconds / 200 + _minVelocity, _maxVelocity);
+          widget.start(velocity);
           setState(() {
             sw.stop();
             sw.reset();
@@ -47,7 +52,9 @@ class _ButtonJumpState extends State<ButtonJump> {
       // When we leave the button, we jump
       onScaleStart: (details) {
         if (sw.isRunning) {
-          widget.start(sw.elapsedMilliseconds / 200 + _minVelocity);
+          double velocity =
+              min(sw.elapsedMilliseconds / 200 + _minVelocity, _maxVelocity);
+          widget.start(velocity);
           setState(() {
             sw.stop();
             sw.reset();
@@ -59,7 +66,9 @@ class _ButtonJumpState extends State<ButtonJump> {
        */
       onLongPressStart: (details) {
         if (sw.isRunning) {
-          widget.start(sw.elapsedMilliseconds / 200 + _minVelocity);
+          double velocity =
+              min(sw.elapsedMilliseconds / 200 + _minVelocity, _maxVelocity);
+          widget.start(velocity);
           setState(() {
             sw.stop();
             sw.reset();

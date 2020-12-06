@@ -1,19 +1,20 @@
-/* Define constants and a structure to easily create a layout
-    The BodyConstants structure contains all elements required to
-    define an obstacle (Boss, Enemy, Platform, Collectable).
- */
-
+/// Define constants and a structure to easily create a layout
+///    The BodyConstants structure contains all elements required to
+///    define an obstacle (Boss, Enemy, Platform, Collectable).
+///
 class BodyConstants {
   final double x, y, w, h;
   final String collectable;
+  final bool breakable;
 
-  const BodyConstants({this.x, this.y, this.w, this.h, this.collectable});
+  const BodyConstants(
+      {this.x, this.y, this.w, this.h, this.collectable, this.breakable=false});
 }
 
 // All platforms have the same width, such that they move on the screen
 // at the same speed.
 const double platformWidth = 8;
-const double spacing = 2/platformWidth;
+const double spacing = 2 / platformWidth;
 
 const double areaHeight = 8;
 

@@ -162,7 +162,7 @@ class _LevelWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.blueAccent,
         border: Border.all(
-          color: BORDER_COLOR,
+          color: Colors.black,
           width: 3,
         ),
         borderRadius: BorderRadius.circular(30.0),

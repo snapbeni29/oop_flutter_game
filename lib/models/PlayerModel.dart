@@ -1,24 +1,23 @@
 import 'dart:math';
-
 import 'package:corona_bot/constants.dart';
-import 'package:flutter/cupertino.dart';
+
 /// Model of the class Player
 class PlayerModel {
   double _life = 1.0;
 
   int _runPos = 0;
-  // Look at the file constants to see all the directions possible
+
   Direction _vertical = Direction.STILL;
   Direction _horizontal = Direction.STILL_RIGHT;
 
   // Life related functions ----------------------------------------------------
 
-  /// If player not dead, decreases the [_life] of the player of [dmg]
+  /// If player not dead, decreases the [_life] of the player by [dmg]
   void damage(double dmg) {
     if (_life > 0.0) _life = max(_life - dmg, 0.0);
   }
 
-  /// Increases the [_life] of the player of [life]
+  /// Increases the [_life] of the player by [life]
   void heal(double life) {
     _life = min(_life + life, 1.0);
   }
@@ -29,8 +28,8 @@ class PlayerModel {
 
   /*
    * It's important to note that the player doesn't move, it's the environment
-   * that move. So the moving functions of the player are only updating its
-   * direction and its position to display to right image and create running
+   * that moves. So the moving functions of the player are only updating its
+   * direction and its sprite to display to right image and create running
    * animation.
    */
 

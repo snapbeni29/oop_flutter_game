@@ -4,7 +4,6 @@ import 'package:corona_bot/Body.dart';
 import 'package:flutter/material.dart';
 
 /// View class of a projectile.
-
 class ProjectileView {
   /// Displays a projectiles at its location.
   ///

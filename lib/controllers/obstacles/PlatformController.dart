@@ -4,25 +4,27 @@ import 'package:corona_bot/views/obstacles/PlatformView.dart';
 import 'package:flutter/material.dart';
 
 class PlatformController {
-  PlatformModel _model;
-  PlatformView _view;
+  PlatformModel model;
+  PlatformView view;
+
+  PlatformController.empty();
 
   PlatformController(Body body) {
-    _model = new PlatformModel(body: body);
-    _view = new PlatformView();
+    model = new PlatformModel(body: body);
+    view = new PlatformView();
   }
 
   void moveLeft(){
-    _model.moveLeft();
+    model.moveLeft();
   }
 
   void moveRight(){
-    _model.moveRight();
+    model.moveRight();
   }
 
-  Body get body => _model.body;
+  Body get body => model.body;
 
   Widget displayPlatform() {
-    return _view.displayPlatform(_model.body);
+    return view.displayPlatform(model.body, -1);
   }
 }

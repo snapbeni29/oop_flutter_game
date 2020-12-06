@@ -11,7 +11,7 @@ class EnemyController {
 
   EnemyController(Body body, int maxHealth, Body area, {int type = 3}) {
     model = new EnemyModel(
-        body: body, maxHealth: maxHealth, area: area, type: type);
+        body: body, mHealth: maxHealth, area: area, type: type);
     view = new EnemyView();
   }
 

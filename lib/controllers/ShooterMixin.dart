@@ -1,5 +1,6 @@
 import 'package:corona_bot/Body.dart';
 import 'package:corona_bot/constants.dart';
+import 'package:corona_bot/controllers/obstacles/BreakPlatformController.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
 import 'package:corona_bot/controllers/obstacles/ProjectileController.dart';
 
@@ -8,7 +9,7 @@ abstract class ShooterMixin {
   // Variables used for the projectiles
   List<ProjectileController> projectileList = List();
   int aliveProjectile = 0;
-  int maxProjectile = 3;
+  int maxProjectile = INIT_PROJECTILE;
   bool firstShoot = false;
 
   // Constants
@@ -47,9 +48,14 @@ abstract class ShooterMixin {
       bool collide = false;
       // Collide with a platform
       for (PlatformController pt in platformList) {
-        if(pt.body.x < 1 && pt.body.x > -1) {
+        // We only check the platforms on screen
+        if (pt.body.x < onScreen && pt.body.x > -onScreen) {
           if (projectile.body.collide(pt.body, pixelWidth, pixelHeight)) {
             collide = true;
+            // If platform can be broken, damage it
+            if(pt is BreakPlatformController){
+              pt.damage();
+            }
             aliveProjectile--;
             toRemove.add(projectile);
             break;
@@ -59,10 +65,10 @@ abstract class ShooterMixin {
       if (!collide) {
         bool outOfScreen = ((projectile.direction == Direction.STILL_RIGHT ||
                     projectile.direction == Direction.RIGHT) &&
-                projectile.body.x > 1.1) ||
+                projectile.body.x > onScreen) ||
             ((projectile.direction == Direction.STILL_LEFT ||
                     projectile.direction == Direction.LEFT) &&
-                projectile.body.x < -1.1);
+                projectile.body.x < -onScreen);
 
         if (outOfScreen) {
           aliveProjectile--;

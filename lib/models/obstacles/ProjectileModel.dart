@@ -15,9 +15,9 @@ class ProjectileModel extends ObstacleModel {
   ProjectileModel({Body body, this.direction, this.blue, this.yAngle})
       : super(body: body);
 
-  /// Moves the projectile toward [direction] at [_speed] for the X axis. For
-  /// the Y axis, if an [yAngle] was provide at the creation of the projectile,
-  /// the projectile moves of [yAngle].
+  /// Moves the projectile toward [direction] at [_speed] for the X axis.
+  /// For the Y axis, if an [yAngle] was provided at the creation of the
+  /// projectile, the projectile moves of [yAngle].
   void travel() {
     body.y += yAngle;
     if (direction == Direction.RIGHT || direction == Direction.STILL_RIGHT)

@@ -26,7 +26,7 @@ class LayoutLevel1 extends LayoutBaseBlocs {
     rightTEnemy(4.25, 2);
     groundEnemy(4.5, 4);
     singleCollectable(5, 0, COIN);
-    wall(5.25, 1, 1.5);
+    wallBreak(5.25);
     groundCollectable(5.5, RED_POTION);
     tunnelEnemy(6, 4);
     bossEnemy(8);

@@ -1,7 +1,4 @@
-#Sat Nov 14 14:22:27 CET 2020
-base.0=C\:\\Users\\Guillaume\\Documents\\Master1\\OOPMobile\\flutter_app_oop_2\\flutter_game_oop\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\out\\classes.dex
-path.1=classes.dex
-renamed.1=classes2.dex
+#Sun Dec 06 16:04:32 CET 2020
+base.0=/Users/demoulinthomas/AndroidStudioProjects/corona_bot/build/app/intermediates/dex/debug/mergeDexDebug/out/classes.dex
 path.0=classes.dex
 renamed.0=classes.dex
-base.1=C\:\\Users\\Guillaume\\Documents\\Master1\\OOPMobile\\flutter_app_oop_2\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\out\\classes.dex

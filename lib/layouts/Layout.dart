@@ -1,6 +1,7 @@
 import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/controllers/PlayerController.dart';
 import 'package:corona_bot/controllers/obstacles/BossController.dart';
+import 'package:corona_bot/controllers/obstacles/BreakPlatformController.dart';
 import 'package:corona_bot/controllers/obstacles/CollectableController.dart';
 import 'package:corona_bot/controllers/obstacles/EnemyController.dart';
 import 'package:corona_bot/controllers/obstacles/PlatformController.dart';
@@ -8,6 +9,8 @@ import 'package:corona_bot/layouts/LayoutBaseBlocs.dart';
 import 'package:corona_bot/layouts/LayoutConstants.dart';
 import 'package:corona_bot/layouts/levels/LayoutLevel1.dart';
 import 'package:corona_bot/Body.dart';
+import 'package:corona_bot/layouts/levels/LayoutLevel2.dart';
+import 'package:corona_bot/layouts/levels/LayoutLevel3.dart';
 import 'package:flutter/material.dart';
 
 /// This class loads a layout based on the levelNumber received as parameter.
@@ -32,6 +35,16 @@ class Layout {
           _layout = LayoutLevel1();
         }
         break;
+      case 2:
+        {
+          _layout = LayoutLevel2();
+        }
+        break;
+      case 3:
+        {
+          _layout = LayoutLevel3();
+        }
+        break;
       default:
         {
           debugPrint("Error while creating layout in level: " +
@@ -51,16 +64,30 @@ class Layout {
     List<BodyConstants> platformsBody = _layout.getPlatforms;
 
     for (var i = 0; i < platformsBody.length; i++) {
-      _platformList.add(
-        new PlatformController(
-          new Body(
-            width: width / platformsBody[i].w,
-            height: height / platformsBody[i].h,
-            x: platformsBody[i].x,
-            y: platformsBody[i].y,
+      if (platformsBody[i].breakable) {
+        _platformList.add(
+          new BreakPlatformController(
+            new Body(
+              width: width / platformsBody[i].w,
+              height: height / platformsBody[i].h,
+              x: platformsBody[i].x,
+              y: platformsBody[i].y,
+            ),
+            PLATFORM_HEALTH,
           ),
-        ),
-      );
+        );
+      } else {
+        _platformList.add(
+          new PlatformController(
+            new Body(
+              width: width / platformsBody[i].w,
+              height: height / platformsBody[i].h,
+              x: platformsBody[i].x,
+              y: platformsBody[i].y,
+            ),
+          ),
+        );
+      }
     }
 
     return _platformList;
@@ -80,7 +107,7 @@ class Layout {
             x: enemiesBody[i].x,
             y: enemiesBody[i].y,
           ),
-          3,
+          ENEMY_HEALTH,
           new Body(
             width: width / enemiesBody[i].w,
             height: height / enemiesBody[i].h,

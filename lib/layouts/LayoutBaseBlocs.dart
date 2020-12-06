@@ -30,6 +30,13 @@ abstract class LayoutBaseBlocs {
     platforms(x, 1, length, height);
   }
 
+  void wallBreak(double x) {
+    _platformList.add(BodyConstants(
+        x: x, y: 1, w: platformWidth, h: 3, breakable: true));
+    _platformList.add(BodyConstants(
+        x: x, y: 0, w: platformWidth, h: 3, breakable: false));
+  }
+
   // Single enemy --------------------------------------------------------------
 
   void singleEnemy(double x, double y, double width) {
@@ -43,7 +50,7 @@ abstract class LayoutBaseBlocs {
 
   /// A boss will always be on the ground and is of fixed size
   void bossEnemy(double x) {
-    _boss = new BodyConstants(x: x, y: 1, w: bossWidth/1.4, h: bossHeight);
+    _boss = new BodyConstants(x: x, y: 1, w: bossWidth / 1.4, h: bossHeight);
   }
 
   // Single collectable --------------------------------------------------------

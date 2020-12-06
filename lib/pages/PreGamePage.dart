@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:corona_bot/constants.dart';
 import 'package:corona_bot/controllers/LevelController.dart';
 import 'package:corona_bot/controllers/PlayerController.dart';
 import 'package:corona_bot/pages/GamePage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +9,7 @@ import 'package:provider/provider.dart';
 /// retrieving the number of the level to play
 /// and starting the loading page.
 class PreGamePage extends StatelessWidget {
-  final levelCreated = 1;
+  final levelCreated = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -124,8 +121,8 @@ class _LoadingPageState extends State<_LoadingPage> {
                         child: Container(
                           width: MediaQuery.of(context).size.width / 14.0,
                           height:
-                              (MediaQuery.of(context).size.height * 5.0 / 7.0) /
-                                  5,
+                          (MediaQuery.of(context).size.height * 5.0 / 7.0) /
+                              5,
                           decoration: BoxDecoration(
                             image: new DecorationImage(
                               image: new AssetImage(
