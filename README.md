@@ -1,15 +1,14 @@
 # CoronaBot
 
-2800 total lines
-2300 lines of code
+## Team DeLoThi
 
-## What's new ?
+Demoulin Thomas
+Lodrini Guillaume
+Thielens Benoit
 
-- Shop implemented
-=> Be able to buy abilities
+## Lines of code
 
-- Boss end-level
-=> Make it object-oriented
-
-- Layout blocs created
-=> Create a place for boss
+3181 lines of code
+455 lines of comment
+404 lines of blank
+4040 lines in total
