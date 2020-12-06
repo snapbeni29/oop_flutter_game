@@ -6,7 +6,7 @@ Demoulin Thomas
 
 Lodrini Guillaume
 
-Thielens Benoit
+Thielen Benoit
 
 ## Lines of code
 
