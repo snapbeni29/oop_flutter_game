@@ -10,7 +10,7 @@ import 'package:corona_bot/models/PlayerModel.dart';
 import 'package:corona_bot/views/PlayerView.dart';
 import 'package:flutter/material.dart';
 
-class PlayerController extends ChangeNotifier with ShooterMixin {
+class PlayerController with ShooterMixin {
   PlayerModel _model;
   PlayerView _view;
 
