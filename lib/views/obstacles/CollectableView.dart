@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 /// View class of a collectable
 class CollectableView {
   /// Displays a collectable at its location.
-  Widget displayPlatform(Body body, String type) {
+  Widget displayCollectable(Body body, String type) {
     Image img;
     if (type == COIN) {
       img = Image.asset('images/Coins/Coin.png');

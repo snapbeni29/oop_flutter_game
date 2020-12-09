@@ -49,7 +49,7 @@ class Layout {
         {
           debugPrint("Error while creating layout in level: " +
               levelNumber.toString());
-          // Return error
+          // Should never reach this
         }
         break;
     }

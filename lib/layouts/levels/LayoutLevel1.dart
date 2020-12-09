@@ -30,6 +30,6 @@ class LayoutLevel1 extends LayoutBaseBlocs {
     groundCollectable(5.5, RED_POTION);
     tunnelEnemy(6, 4);
     bossEnemy(8);
-    groundCollectable(10, END_FLAG);
+    groundCollectable(9, END_FLAG);
   }
 }

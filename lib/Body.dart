@@ -61,7 +61,7 @@ class Body {
     return false;
   }
 
-  /// this goes in direction
+  /// 'this' goes in direction
   /// return true if this collides with other vertically
   ///
   bool collideVertically(
@@ -94,7 +94,7 @@ class Body {
 
   /* ---------------------------------------------------------------------- */
   /* Helper functions ----------------------------------------------------- */
-  /* -> dynamically gets the boundaries of a body on the screen, ---------- */
+  /* -> dynamically get the boundaries of a body on the screen, ----------- */
   /*    based on a coordinate and a length -------------------------------- */
   /* ---------------------------------------------------------------------- */
 

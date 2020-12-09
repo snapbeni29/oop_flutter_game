@@ -21,7 +21,7 @@ class CollectableController{
   }
 
   Widget displayCollectable() {
-    return _view.displayPlatform(_model.body, _model.type);
+    return _view.displayCollectable(_model.body, _model.type);
   }
 
   Body get body => _model.body;
